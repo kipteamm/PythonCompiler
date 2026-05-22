@@ -16,10 +16,17 @@ public:
 private:
     [[nodiscard]] bool atEnd() const;
     [[nodiscard]] bool match(char expected);
+    [[nodiscard]] char peek(int index) const;
     [[nodiscard]] char peek() const;
     char advance();
 
+    [[nodiscard]] bool isDigit(char c) const;
+    [[nodiscard]] bool isAlpha(char c) const;
+    [[nodiscard]] bool isAlphaNumeric(char c) const;
+
     void addStringOrChar(char terminator);
+    void addNumber();
+    void addIdentifier();
 
     void addToken(TokenType type, const std::string& lexeme);
     void addToken(TokenType type);

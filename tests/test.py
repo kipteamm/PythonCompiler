@@ -1,4 +1,9 @@
 a: int = 5
+b = 5
 
-# new syntax nr 1, characters
-b: char = `n`
+# new syntax: characters
+c: char = `n`
+d = `m`
+
+# new syntax: integer sizes
+a: int[8] = 5

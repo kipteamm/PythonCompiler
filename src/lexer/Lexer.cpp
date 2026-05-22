@@ -81,11 +81,11 @@ void Lexer::addStringOrChar(const char terminator) {
 void Lexer::addNumber() {
     while (isDigit(peek())) advance();
 
-    TokenType type = INTEGER;
+    TOKENTYPE type = INTEGER;
 
     // Fraction? If so consume . and keep looking for digits.
     if (peek() == '.' && isDigit(peek(current + 1))) {
-        type = FLOAT;
+        type = FRACTION;
         advance();
 
         while (isDigit(peek())) advance();
@@ -103,17 +103,17 @@ void Lexer::addIdentifier() {
     // Check whether found identifier is a reserved keyword. Change type to
     // IDENTIFIER otherwise
     const auto it = KEYWORDS.find(value);
-    const TokenType type = (it != KEYWORDS.end()) ? it->second : IDENTIFIER;
+    const TOKENTYPE type = (it != KEYWORDS.end()) ? it->second : IDENTIFIER;
 
     addToken(type, value);
 }
 
 
-void Lexer::addToken(TokenType type, const std::string &lexeme) {
+void Lexer::addToken(TOKENTYPE type, const std::string &lexeme) {
     tokens.emplace_back(type, lexeme);
 }
 
-void Lexer::addToken(TokenType type) {
+void Lexer::addToken(TOKENTYPE type) {
     const std::string lexeme = source.substr(start, current - start);
     tokens.emplace_back(type, lexeme);
 }
@@ -144,7 +144,7 @@ void Lexer::scanSource() {
         case '*': addToken(STAR); break;
         case '/': addToken(SLASH); break;
 
-        // Dot OR Floating point
+        // Dot OR Fraction floating point
         case '.':
             if (isDigit(peek())) addNumber();
             else addToken(DOT);

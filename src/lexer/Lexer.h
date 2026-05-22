@@ -1,7 +1,7 @@
 #ifndef PYTHONCOMPILER_LEXER_H
 #define PYTHONCOMPILER_LEXER_H
 
-#include "Token.h"
+#include "../common/Token.h"
 
 #include <string>
 #include <vector>
@@ -18,6 +18,7 @@ private:
     [[nodiscard]] bool match(char expected);
     [[nodiscard]] char peek(int index) const;
     [[nodiscard]] char peek() const;
+
     char advance();
 
     [[nodiscard]] bool isDigit(char c) const;
@@ -28,8 +29,8 @@ private:
     void addNumber();
     void addIdentifier();
 
-    void addToken(TokenType type, const std::string& lexeme);
-    void addToken(TokenType type);
+    void addToken(TOKENTYPE type, const std::string& lexeme);
+    void addToken(TOKENTYPE type);
 
     void scanSource();
 

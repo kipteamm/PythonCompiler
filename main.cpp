@@ -1,7 +1,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "src/Lexer.h"
+#include "src/lexer/Lexer.h"
+#include "src/parsing/Parser.h"
 
 
 int main(int argc, char* argv[]) {
@@ -30,6 +31,9 @@ int main(int argc, char* argv[]) {
         std::cout << token << ", ";
     }
     std::cout << std::endl;
+
+    Parser parser(tokens);
+    auto scope = parser.start();
 
     return 0;
 }

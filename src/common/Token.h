@@ -6,7 +6,7 @@
 #include <string>
 
 
-enum TokenType {
+enum TOKENTYPE {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET,
 
     COMMA, DOT, MINUS, PLUS, SLASH, STAR,
@@ -16,21 +16,34 @@ enum TokenType {
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
 
     // Literals
-    CHARACTER, STRING, INTEGER, FLOAT,
+    CHARACTER, FRACTION, INTEGER, STRING,
     IDENTIFIER,
 
     // Keywords:
-    FALSE, NONE, TRUE, AND, AS, ASSERT, ASYNC, AWAIT, BREAK, CHAR, CLASS,
+    FALSE, NONE, TRUE, AND, AS, ASSERT, ASYNC, AWAIT, BREAK, CLASS,
     CONTINUE, DEF, DEL, ELIF, ELSE, EXCEPT, FINALLY, FOR, FROM,
-    GLOBAL, IF, IMPORT, IN, INT, IS, LAMBDA, NONLOCAL, NOT, OR, PASS,
+    GLOBAL, IF, IMPORT, IN, IS, LAMBDA, NONLOCAL, NOT, OR, PASS,
     RAISE, RETURN, TRY, WHILE, WITH, YIELD,
 
+    // TYPES
+    CHAR, DICT, FLOAT, INT, LIST, STR,
+
     COMMENT,
+    UNKNOWN,
     END // End Of File (EOF is reserved)
 };
 
 
-static std::unordered_map<std::string, TokenType> KEYWORDS = {
+inline bool isLiteral(const TOKENTYPE type) {
+    return type >= CHARACTER && type <= STRING;
+}
+
+inline bool isType(const TOKENTYPE type) {
+    return type >= CHAR && type <= STR;
+}
+
+
+static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"False",    FALSE},
     {"None",     NONE},
     {"True",     TRUE},
@@ -71,7 +84,7 @@ static std::unordered_map<std::string, TokenType> KEYWORDS = {
 };
 
 
-inline std::string tokenTypeToString(const TokenType type) {
+inline std::string tokenTypeToString(const TOKENTYPE type) {
     switch (type) {
         case LEFT_PAREN:     return "LEFT_PAREN";
         case RIGHT_PAREN:    return "RIGHT_PAREN";
@@ -171,10 +184,10 @@ inline std::string tokenTypeToString(const TokenType type) {
 
 
 struct Token {
-    TokenType type;
+    TOKENTYPE type;
     std::string lexeme;
 
-    explicit Token(const TokenType type, std::string lexeme)
+    explicit Token(const TOKENTYPE type, std::string lexeme)
         : type(type), lexeme(std::move(lexeme)) {}
 
     [[nodiscard]] friend std::ostream& operator<<(std::ostream& stream, const Token& token) {

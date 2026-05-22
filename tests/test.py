@@ -6,4 +6,4 @@ c: char = `n`
 d = `m`
 
 # new syntax: integer sizes
-a: int[8] = 5
+# a: int[i8] = 5

@@ -7,6 +7,8 @@
 class Expression : public Node {
 public:
     Expression() = default;
+
+    void accept(ASTVisitor *visitor) override;
 };
 
 
@@ -17,6 +19,10 @@ class Char : public Literal {
 public:
     explicit Char(char value);
 
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] char getValue() const { return value; }
+
 private:
     char value;
 };
@@ -25,6 +31,10 @@ private:
 class Int : public Literal {
 public:
     explicit Int(int value);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] int getValue() const { return value; }
 
 private:
     int value;

@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "src/ast/DotVisitor.h"
 #include "src/lexer/Lexer.h"
 #include "src/parsing/Parser.h"
 
@@ -34,6 +35,15 @@ int main(int argc, char* argv[]) {
 
     Parser parser(tokens);
     auto scope = parser.start();
+
+    // Create the debug DOT visualization
+    DotVisitor dotPrinter;
+    scope->accept(&dotPrinter);
+
+    // Save to file
+    std::ofstream outFile("../output/ast.dot");
+    outFile << dotPrinter.getDot();
+    outFile.close();
 
     return 0;
 }

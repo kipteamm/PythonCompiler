@@ -52,14 +52,14 @@ std::unique_ptr<Statement> Parser::statement() {
 }
 
 
-std::unique_ptr<Declaration> Parser::assignment() {
+std::unique_ptr<Assignment> Parser::assignment() {
     const Token id = advance();
     const Token type = match(COLON)? advanceAssert(isType): Token(UNKNOWN, "UNKNOWN");
 
     std::unique_ptr<Expression> expr = nullptr;
     if (match(EQUAL)) expr = expression();
 
-    return std::make_unique<Declaration>(id, type, std::move(expr));
+    return std::make_unique<Assignment>(id, type, std::move(expr));
 }
 
 

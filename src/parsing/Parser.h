@@ -26,7 +26,7 @@ private:
     // STATEMENTS
     [[nodiscard]] std::unique_ptr<Statement> statement();
 
-    [[nodiscard]] std::unique_ptr<Declaration> assignment();
+    [[nodiscard]] std::unique_ptr<Assignment> assignment();
     [[nodiscard]] std::unique_ptr<Comment> comment();
     [[nodiscard]] std::unique_ptr<Function> function();
 

@@ -19,7 +19,10 @@ class Scope : public Statement {
 public:
     Scope() = default;
 
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
     void addStatement(std::unique_ptr<Statement> statement) { this->statements.push_back(std::move(statement)); }
+    [[nodiscard]] const std::vector<std::unique_ptr<Statement>>& getStatements() const { return statements; }
 
 private:
     std::vector<std::unique_ptr<Statement>> statements;
@@ -28,16 +31,26 @@ private:
 
 class Comment : public Statement {
 public:
-    Comment(std::string  comment);
+    explicit Comment(std::string  comment);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    std::string& getComment() { return comment; }
 
 private:
     std::string comment;
 };
 
 
-class Declaration : public Statement {
+class Assignment : public Statement {
 public:
-    Declaration(Token  identifier, Token  type, std::unique_ptr<Expression> expr);
+    Assignment(Token identifier, Token  type, std::unique_ptr<Expression> expr);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] Token& getType() { return type; }
+    [[nodiscard]] Expression* getExpr() const { return expr.get(); }
 
 private:
     Token identifier;
@@ -49,6 +62,8 @@ private:
 class Function : public Statement {
 public:
     Function() = default;
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 };
 
 

@@ -9,10 +9,19 @@
 
 class Node {
 public:
-    Node() = default;
+    Node() : id(nextId++) {};
     virtual ~Node() = default;
-    
+
     virtual void accept(ASTVisitor* visitor) = 0;
+
+    friend std::ostream& operator<<(std::ostream& stream, const Node& node) {
+        return stream << "node_" << node.id;
+    }
+
+private:
+    int id;
+
+    inline static int nextId = 0;
 };
 
 

@@ -21,9 +21,6 @@ public:
     void visit(Int *node) override;
 
 private:
-    [[nodiscard]] std::string nodeId(Node* node);
-
-
     std::ostringstream oss;
 };
 

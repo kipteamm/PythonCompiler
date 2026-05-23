@@ -15,36 +15,31 @@ std::string DotVisitor::getDot() {
 
 
 void DotVisitor::visit(Scope *node) {
-    const std::string id = nodeId(node);
-    oss << "\t" << id << "[label=\"Scope\"];\n";
+    oss << "\t" << *node << "[label=\"Scope\"];\n";
 
-    for (const auto& statement : node->getStatements()) {
-        oss << "\t" << id << " -> " << nodeId(statement.get()) << ";\n";
-        statement->accept(this);
+    for (const auto& stmt : node->getStatements()) {
+        oss << "\t" << *node << " -> " << *stmt << ";\n";
+        stmt->accept(this);
     }
 }
 
 
 void DotVisitor::visit(Assignment* node) {
-    const std::string id = nodeId(node);
-
     std::string label = "Assignment\n" + node->getIdentifier().lexeme;
     if (node->getType().type != UNKNOWN) {
         label += ": " + node->getType().lexeme;
     }
 
-    oss << "\t" << id << " [label=\"" << label << "\", fontcolor=\"#d73a49\"];\n";
+    oss << "\t" << *node << " [label=\"" << label << "\", fontcolor=\"#d73a49\"];\n";
 
     if (node->getExpr()) {
-        oss << "\t" << id << " -> " << nodeId(node->getExpr()) << ";\n";
+        oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
         node->getExpr()->accept(this);
     }
 }
 
 
 void DotVisitor::visit(Comment* node) {
-    const std::string id = nodeId(node);
-
     std::string cleanComment = node->getComment();
     size_t pos = 0;
 
@@ -54,45 +49,35 @@ void DotVisitor::visit(Comment* node) {
         pos += 2;
     }
 
-    oss << "\t" << id << " [label=\"Comment\\n" << cleanComment << "\", fontcolor=\"#6a737d\"];\n";
+    oss << "\t" << *node << " [label=\"Comment\\n" << cleanComment << "\", fontcolor=\"#6a737d\"];\n";
 }
 
 
 void DotVisitor::visit(Int* node) {
-    const std::string id = nodeId(node);
-    oss << "\t" << id << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+    oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
 void DotVisitor::visit(Char* node) {
-    const std::string id = nodeId(node);
-    oss << "\t" << id << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+    oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
 void DotVisitor::visit(Function* node) {
-    const std::string id = nodeId(node);
-    oss << "\t" << id << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
+    oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
     for (const std::unique_ptr<Parameter>& param : node->getParameters()) {
         param->accept(this);
-        oss << "\t" << id << " -> " << nodeId(param.get()) << ";\n";
+        oss << "\t" << *node << " -> " << *param << ";\n";
     }
 }
 
 
 void DotVisitor::visit(Parameter* node) {
-    const std::string id = nodeId(node);
-    oss << "\t" << id << " [label=\"Parameter\n" << node->getIdentifier().lexeme << ": " << node->getType().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+    oss << "\t" << *node << " [label=\"Parameter\n" << node->getIdentifier().lexeme << ": " << node->getType().lexeme << "\", fontcolor=\"#005cc5\"];\n";
 
     if (node->getInitValue() == nullptr) return;
 
     node->getInitValue()->accept(this);
-    oss << "\t" << id << " -> " << nodeId(node->getInitValue()) << ";\n";
+    oss << "\t" << *node << " -> " << *node->getInitValue() << ";\n";
 }
 
 
-
-std::string DotVisitor::nodeId(Node* node) {
-    std::ostringstream address;
-    address << "node_" << reinterpret_cast<uintptr_t>(node);
-    return address.str();
-}

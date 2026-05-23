@@ -1,0 +1,42 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_2;
+	node_2 [label="Assignment
+a: int", fontcolor="#d73a49"];
+	node_2 -> node_1;
+	node_1 [label="Int(5)", fontcolor="#005cc5"];
+	node_0 -> node_4;
+	node_4 [label="Assignment
+b", fontcolor="#d73a49"];
+	node_4 -> node_3;
+	node_3 [label="Int(5)", fontcolor="#005cc5"];
+	node_0 -> node_5;
+	node_5 [label="Comment\n# new syntax: characters", fontcolor="#6a737d"];
+	node_0 -> node_7;
+	node_7 [label="Assignment
+c: char", fontcolor="#d73a49"];
+	node_7 -> node_6;
+	node_6 [label="Char(n)", fontcolor="#005cc5"];
+	node_0 -> node_9;
+	node_9 [label="Assignment
+d", fontcolor="#d73a49"];
+	node_9 -> node_8;
+	node_8 [label="Char(m)", fontcolor="#005cc5"];
+	node_0 -> node_10;
+	node_10 [label="Comment\n# new syntax: integer sizes", fontcolor="#6a737d"];
+	node_0 -> node_11;
+	node_11 [label="Comment\n# a: int[i8] = 5", fontcolor="#6a737d"];
+	node_0 -> node_14;
+	node_14 [label="Function
+example -> char", fontcolor="#d73a49"];
+	node_12 [label="Parameter
+a: int", fontcolor="#005cc5"];
+	node_14 -> node_12;
+	node_13 [label="Parameter
+b: char", fontcolor="#005cc5"];
+	node_14 -> node_13;
+
+}

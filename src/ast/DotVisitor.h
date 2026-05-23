@@ -6,7 +6,7 @@
 #include "ASTVisitor.h"
 
 
-class DotVisitor : public ASTVisitor {
+class DotVisitor final : public ASTVisitor {
 public:
     DotVisitor();
 
@@ -16,6 +16,7 @@ public:
     void visit(Comment *node) override;
     void visit(Assignment *node) override;
     void visit(Function *node) override;
+    void visit(Parameter* node) override;
     void visit(Char *node) override;
     void visit(Int *node) override;
 

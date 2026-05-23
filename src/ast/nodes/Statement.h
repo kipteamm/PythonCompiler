@@ -15,7 +15,7 @@ public:
 };
 
 
-class Scope : public Statement {
+class Scope final : public Statement {
 public:
     Scope() = default;
 
@@ -29,7 +29,7 @@ private:
 };
 
 
-class Comment : public Statement {
+class Comment final : public Statement {
 public:
     explicit Comment(std::string  comment);
 
@@ -42,9 +42,9 @@ private:
 };
 
 
-class Assignment : public Statement {
+class Assignment final : public Statement {
 public:
-    Assignment(Token identifier, Token  type, std::unique_ptr<Expression> expr);
+    Assignment(Token identifier, Token type, std::unique_ptr<Expression> expr);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
@@ -59,11 +59,20 @@ private:
 };
 
 
-class Function : public Statement {
+class Function final : public Statement {
 public:
-    Function() = default;
+    explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Token& getName() { return name; }
+    [[nodiscard]] Token& getReturnType() { return returnType; }
+    [[nodiscard]] std::vector<std::unique_ptr<Parameter>>& getParameters() { return parameters; }
+
+private:
+    Token name;
+    Token returnType;
+    std::vector<std::unique_ptr<Parameter>> parameters;
 };
 
 

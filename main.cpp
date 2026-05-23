@@ -3,7 +3,7 @@
 
 #include "src/ast/DotVisitor.h"
 #include "src/lexer/Lexer.h"
-#include "src/parsing/Parser.h"
+#include "src/parser/Parser.h"
 
 
 int main(int argc, char* argv[]) {

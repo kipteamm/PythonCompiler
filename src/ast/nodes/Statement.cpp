@@ -8,4 +8,8 @@ Comment::Comment(std::string comment)
 
 
 Assignment::Assignment(Token identifier, Token type, std::unique_ptr<Expression> expr)
-    : identifier(std::move(identifier)), type(std::move(type)), expr(std::move(expr)){}
+    : identifier(std::move(identifier)), type(std::move(type)), expr(std::move(expr)) {}
+
+
+Function::Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters)
+    : name(std::move(name)), returnType(std::move(returnType)), parameters(std::move(parameters)) {}

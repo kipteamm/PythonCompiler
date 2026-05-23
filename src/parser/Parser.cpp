@@ -1,0 +1,139 @@
+#include "Parser.h"
+
+
+Parser::Parser(const std::vector<Token> &tokens) : tokens(tokens) {}
+
+
+Token Parser::peek() const {
+    return tokens.at(current);
+}
+
+bool Parser::match(const TOKENTYPE token) {
+    if (peek().type != token) return false;
+
+    advance();
+    return true;
+}
+
+
+Token Parser::consume(const Assertion assertion, const std::string& error) {
+    if (assertion(peek().type)) return advance();
+
+    throw std::runtime_error(error);
+}
+
+Token Parser::consume(const TOKENTYPE type, const std::string& error) {
+    if (peek().type == type) return advance();
+
+    throw std::runtime_error(error);
+}
+
+
+
+Token Parser::advance() {
+    return tokens.at(current++);
+}
+
+
+std::unique_ptr<Scope> Parser::start() {
+    auto scope = std::make_unique<Scope>();
+
+    while (!match(END)) {
+        scope->addStatement(statement());
+    }
+
+    return scope;
+}
+
+
+std::unique_ptr<Statement> Parser::statement() {
+    switch (peek().type) {
+        // Both declarations and assignments are rather ambigious in Python, so
+        // we assume everything is an assignment. This is later properly
+        // handled to assure that the first assignment is also a declaration.
+        case IDENTIFIER:  return assignment();
+        case DEF:         return function();
+        case COMMENT:     return comment();
+        default:
+            throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
+    }
+}
+
+
+std::unique_ptr<Assignment> Parser::assignment() {
+    const Token identifier = consume(IDENTIFIER, "expected identifier");
+    const Token type = match(COLON)
+        ? consume(isType, "expected type")
+        : Token(UNKNOWN, "UNKNOWN");
+
+    std::unique_ptr<Expression> expr = nullptr;
+    if (match(EQUAL)) expr = expression();
+
+    return std::make_unique<Assignment>(identifier, type, std::move(expr));
+}
+
+
+std::unique_ptr<Comment> Parser::comment() {
+    const Token& comment = consume(COMMENT, "expected comment");
+    return std::make_unique<Comment>(comment.lexeme);
+}
+
+
+std::unique_ptr<Function> Parser::function() {
+    advance(); // DEF keyword
+
+    const Token& identifier = consume(IDENTIFIER, "expected function name");
+    consume(LEFT_PAREN, "expected '(' after function name");
+
+    std::vector<std::unique_ptr<Parameter>> parameters;
+
+    while (!match(RIGHT_PAREN)) {
+        parameters.push_back(parameter());
+
+        // If the next token is a comma we build a new parameter, if next token
+        // is a RIGHT_PAREN we found all paremeters.
+        if (match(COMMA) || peek().type == RIGHT_PAREN) continue;
+
+        // expected ',' or ')' in parameter list
+        break;
+    }
+
+    consume(ARROW, "expected '->' return type specifier");
+    const Token& returnType = consume(isType, "expected valid return type");
+
+    consume(COLON, "expected ':' after function signature");
+
+    return std::make_unique<Function>(identifier, returnType, std::move(parameters));
+}
+
+
+std::unique_ptr<Parameter> Parser::parameter() {
+    const Token& identifier = consume(IDENTIFIER, "expected parameter name");
+    consume(COLON, "expected ':' after paremeter name");
+    const Token& type = consume(isType, "expected a type for parameter");
+
+    std::unique_ptr<Expression> expr = nullptr;
+    if (match(EQUAL)) expr = expression();
+
+    return std::make_unique<Parameter>(type, identifier, std::move(expr));
+}
+
+
+
+std::unique_ptr<Expression> Parser::expression() {
+    const Token& token = advance();
+    if (isLiteral(token.type)) return literal(token);
+
+    // FAKE
+    return std::make_unique<Int>(0);
+}
+
+
+std::unique_ptr<Literal> Parser::literal(const Token &token) const {
+    switch (token.type) {
+        case CHARACTER:  return std::make_unique<Char>(token.lexeme[0]);
+        case INTEGER:    return std::make_unique<Int>(std::stoi(token.lexeme));
+        default:
+            throw std::runtime_error("Failed to parse literal, got " + tokenTypeToString(token.type) + " at " + std::to_string(current));
+    }
+}

@@ -4,18 +4,10 @@
 #include "Node.h"
 
 
-class Expression : public Node {
-public:
-    Expression() = default;
-
-    void accept(ASTVisitor *visitor) override;
-};
-
-
 class Literal : public Expression {};
 
 
-class Char : public Literal {
+class Char final : public Literal {
 public:
     explicit Char(char value);
 
@@ -28,7 +20,7 @@ private:
 };
 
 
-class Int : public Literal {
+class Int final : public Literal {
 public:
     explicit Int(int value);
 

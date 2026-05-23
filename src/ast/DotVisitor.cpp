@@ -70,8 +70,25 @@ void DotVisitor::visit(Char* node) {
 
 void DotVisitor::visit(Function* node) {
     const std::string id = nodeId(node);
-    oss << "\t" << id << " [label=\"Function\", fontcolor=purple];\n";
+    oss << "\t" << id << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
+
+    for (const std::unique_ptr<Parameter>& param : node->getParameters()) {
+        param->accept(this);
+        oss << "\t" << id << " -> " << nodeId(param.get()) << ";\n";
+    }
 }
+
+
+void DotVisitor::visit(Parameter* node) {
+    const std::string id = nodeId(node);
+    oss << "\t" << id << " [label=\"Parameter\n" << node->getIdentifier().lexeme << ": " << node->getType().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+
+    if (node->getInitValue() == nullptr) return;
+
+    node->getInitValue()->accept(this);
+    oss << "\t" << id << " -> " << nodeId(node->getInitValue()) << ";\n";
+}
+
 
 
 std::string DotVisitor::nodeId(Node* node) {

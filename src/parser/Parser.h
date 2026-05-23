@@ -20,7 +20,8 @@ private:
     [[nodiscard]] Token peek() const;
     [[nodiscard]] bool match(TOKENTYPE token);
 
-    Token advanceAssert(Assertion assertion);
+    Token consume(Assertion assertion, const std::string& error);
+    Token consume(TOKENTYPE type, const std::string& error);
     Token advance();
 
     // STATEMENTS
@@ -29,6 +30,7 @@ private:
     [[nodiscard]] std::unique_ptr<Assignment> assignment();
     [[nodiscard]] std::unique_ptr<Comment> comment();
     [[nodiscard]] std::unique_ptr<Function> function();
+    [[nodiscard]] std::unique_ptr<Parameter> parameter();
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression();

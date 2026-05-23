@@ -7,3 +7,5 @@ d = `m`
 
 # new syntax: integer sizes
 # a: int[i8] = 5
+
+def example(a: int, b: char) -> char:

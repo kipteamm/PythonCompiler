@@ -20,6 +20,7 @@ public:
     void visit(Return* node) override;
     void visit(Char *node) override;
     void visit(Int *node) override;
+    void visit(Float* node) override;
 
 private:
     std::ostringstream oss;

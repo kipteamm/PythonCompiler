@@ -33,4 +33,17 @@ private:
 };
 
 
+class Float final : public Literal {
+public:
+    explicit Float(float value);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] float getValue() const { return value; }
+
+private:
+    float value;
+};
+
+
 #endif //PYTHONCOMPILER_EXPRESSION_H

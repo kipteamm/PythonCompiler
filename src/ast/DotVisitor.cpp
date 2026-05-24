@@ -94,3 +94,7 @@ void DotVisitor::visit(Int* node) {
 void DotVisitor::visit(Char* node) {
     oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
+
+void DotVisitor::visit(Float* node) {
+    oss << "\t" << *node << " [label=\"Float(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}

@@ -62,6 +62,7 @@ static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"else",     ELSE},
     {"except",   EXCEPT},
     {"finally",  FINALLY},
+    {"float",    FLOAT},
     {"for",      FOR},
     {"from",     FROM},
     {"global",   GLOBAL},
@@ -117,7 +118,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case CHARACTER:      return "CHARACTER";
         case STRING:         return "STRING";
         case INTEGER:        return "INTEGER";
-        case FLOAT:          return "FLOAT";
+        case FRACTION:       return "FRACTION";
         case IDENTIFIER:     return "IDENTIFIER";
 
         // Keywords
@@ -139,6 +140,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case ELSE:           return "ELSE";
         case EXCEPT:         return "EXCEPT";
         case FINALLY:        return "FINALLY";
+        case FLOAT:        return "FLOAT";
         case FOR:            return "FOR";
         case FROM:           return "FROM";
         case GLOBAL:         return "GLOBAL";

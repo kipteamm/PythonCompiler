@@ -113,13 +113,12 @@ void Lexer::addStringOrChar(const char terminator) {
     addToken(terminator == '`'? CHARACTER: STRING, value);
 }
 
-void Lexer::addNumber() {
+void Lexer::addNumber(TOKENTYPE type) {
     while (isDigit(peek())) advance();
 
-    TOKENTYPE type = INTEGER;
-
-    // Fraction? If so consume . and keep looking for digits.
-    if (peek() == '.' && isDigit(peek(current + 1))) {
+    // Currently an int and next up we find a dot? Consume . and keep looking
+    // for digits.
+    if (type == INTEGER && peek() == '.' && isDigit(peek(current + 1))) {
         type = FRACTION;
         advance();
 
@@ -179,7 +178,7 @@ void Lexer::scanSource() {
 
         // Dot OR Fraction floating point
         case '.':
-            if (isDigit(peek())) addNumber();
+            if (isDigit(peek())) addNumber(FRACTION);
             else addToken(DOT);
             break;
 
@@ -207,10 +206,8 @@ void Lexer::scanSource() {
             addToken(COMMENT); break;
 
         default:
-            if (isDigit(c)) addNumber();
+            if (isDigit(c)) addNumber(INTEGER);
             else if (isAlpha(c)) addIdentifier();
             else std::cerr << line << " unexpected character. '" << c << "'" << std::endl;
     }
-
-    start = current;
 }

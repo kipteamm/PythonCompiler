@@ -161,6 +161,7 @@ std::unique_ptr<Literal> Parser::literal(const Token &token) const {
     switch (token.type) {
         case CHARACTER:  return std::make_unique<Char>(token.lexeme[0]);
         case INTEGER:    return std::make_unique<Int>(std::stoi(token.lexeme));
+        case FRACTION:   return std::make_unique<Float>(std::stof(token.lexeme));
         default:
             throw std::runtime_error("Failed to parse literal, got " + tokenTypeToString(token.type) + " at " + std::to_string(current));
     }

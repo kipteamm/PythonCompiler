@@ -28,7 +28,7 @@ private:
     void countIndents();
 
     void addStringOrChar(char terminator);
-    void addNumber();
+    void addNumber(TOKENTYPE type);
     void addIdentifier();
 
     void addToken(TOKENTYPE type, const std::string& lexeme);

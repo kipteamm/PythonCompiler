@@ -9,12 +9,12 @@ start: statement* EOF;
 /* STATEMENTS */
 statement
     : assignment
-    | COMMENTw
+    | COMMENT
     | function;
 
 assignment: IDENTIFIER (':' TYPE)? ('=' expression)?;
 
-function: 'def' IDENTIFIER '(' parameters '):' ('->' TYPE)?;
+function: 'def' IDENTIFIER '(' parameters ')' '->' TYPE ':' statement*;
 parameters: parameter (',' parameter)*;
 parameter: IDENTIFIER ':' TYPE ('=' expression);
 

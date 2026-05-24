@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "../../common/Token.h"
-#include "Expression.h"
 #include "Node.h"
 
 
@@ -44,7 +43,7 @@ private:
 
 class Assignment final : public Statement {
 public:
-    Assignment(Token identifier, Token type, std::unique_ptr<Expression> expr);
+    explicit Assignment(Token identifier, Token type, std::unique_ptr<Expression> expr);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
@@ -61,19 +60,33 @@ private:
 
 class Function final : public Statement {
 public:
-    explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters);
+    explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
     [[nodiscard]] Token& getName() { return name; }
     [[nodiscard]] Token& getReturnType() { return returnType; }
     [[nodiscard]] std::vector<std::unique_ptr<Parameter>>& getParameters() { return parameters; }
+    [[nodiscard]] Scope* getBody() const { return body.get(); }
 
 private:
     Token name;
     Token returnType;
     std::vector<std::unique_ptr<Parameter>> parameters;
+    std::unique_ptr<Scope> body;
 };
 
+
+class Return final : public Statement {
+public:
+    explicit Return(std::unique_ptr<Expression> expr);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Expression* getExpr() const { return expr.get(); }
+
+private:
+    std::unique_ptr<Expression> expr;
+};
 
 #endif //PYTHONCOMPILER_STATEMENT_H

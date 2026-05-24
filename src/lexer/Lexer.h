@@ -25,6 +25,8 @@ private:
     [[nodiscard]] bool isAlpha(char c) const;
     [[nodiscard]] bool isAlphaNumeric(char c) const;
 
+    void countIndents();
+
     void addStringOrChar(char terminator);
     void addNumber();
     void addIdentifier();
@@ -36,6 +38,7 @@ private:
 
     std::string source;
     std::vector<Token> tokens;
+    std::vector<int> indentStack = {0};
 
     int current = 0;
     int line = 0;

@@ -1,5 +1,6 @@
 #include "DotVisitor.h"
 
+#include "nodes/Expression.h"
 #include "nodes/Statement.h"
 
 
@@ -53,14 +54,6 @@ void DotVisitor::visit(Comment* node) {
 }
 
 
-void DotVisitor::visit(Int* node) {
-    oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
-}
-
-void DotVisitor::visit(Char* node) {
-    oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
-}
-
 void DotVisitor::visit(Function* node) {
     oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
@@ -68,6 +61,10 @@ void DotVisitor::visit(Function* node) {
         param->accept(this);
         oss << "\t" << *node << " -> " << *param << ";\n";
     }
+
+    node->getBody()->accept(this);
+
+    oss << "\t" << *node << " -> " << *node->getBody() << ";\n";
 }
 
 
@@ -81,3 +78,19 @@ void DotVisitor::visit(Parameter* node) {
 }
 
 
+void DotVisitor::visit(Return* node) {
+    oss << "\t" << *node << " [label=\"Return\", fontcolor=\"#d73a49\"];\n";
+
+    node->getExpr()->accept(this);
+
+    oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
+}
+
+
+void DotVisitor::visit(Int* node) {
+    oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+
+void DotVisitor::visit(Char* node) {
+    oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}

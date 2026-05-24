@@ -17,6 +17,7 @@ public:
     void visit(Assignment *node) override;
     void visit(Function *node) override;
     void visit(Parameter* node) override;
+    void visit(Return* node) override;
     void visit(Char *node) override;
     void visit(Int *node) override;
 

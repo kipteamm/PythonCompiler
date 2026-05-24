@@ -9,3 +9,4 @@ d = `m`
 # a: int[i8] = 5
 
 def example(a: int, b: char) -> char:
+    return 0

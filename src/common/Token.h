@@ -11,7 +11,7 @@ enum TOKENTYPE {
 
     COMMA, DOT, MINUS, PLUS, SLASH, STAR,
 
-    COLON, ARROW, TAB,
+    COLON, ARROW, INDENT, DEDENT,
 
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
 
@@ -102,7 +102,8 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
 
         case COLON:          return "COLON";
         case ARROW:          return "ARROW";
-        case TAB:            return "TAB";
+        case INDENT:         return "INDENT";
+        case DEDENT:         return "DEDENT";
 
         case BANG_EQUAL:     return "BANG_EQUAL";
         case BANG:           return "BANG";

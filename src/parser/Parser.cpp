@@ -9,6 +9,7 @@ Token Parser::peek() const {
 }
 
 bool Parser::match(const TOKENTYPE token) {
+    if (current >= tokens.size()) throw std::runtime_error("expected token " + tokenTypeToString(token) + " not found");
     if (peek().type != token) return false;
 
     advance();
@@ -46,6 +47,20 @@ std::unique_ptr<Scope> Parser::start() {
 }
 
 
+std::unique_ptr<Scope> Parser::scope() {
+    consume(INDENT, "wrong indentation level");
+
+    auto scope = std::make_unique<Scope>();
+
+    while (!match(DEDENT)) {
+        scope->addStatement(statement());
+    }
+
+    return scope;
+}
+
+
+
 std::unique_ptr<Statement> Parser::statement() {
     switch (peek().type) {
         // Both declarations and assignments are rather ambigious in Python, so
@@ -54,6 +69,7 @@ std::unique_ptr<Statement> Parser::statement() {
         case IDENTIFIER:  return assignment();
         case DEF:         return function();
         case COMMENT:     return comment();
+        case RETURN:      return return_();
         default:
             throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
     }
@@ -103,7 +119,9 @@ std::unique_ptr<Function> Parser::function() {
 
     consume(COLON, "expected ':' after function signature");
 
-    return std::make_unique<Function>(identifier, returnType, std::move(parameters));
+    auto scope = this->scope();
+
+    return std::make_unique<Function>(identifier, returnType, std::move(parameters), std::move(scope));
 }
 
 
@@ -117,6 +135,16 @@ std::unique_ptr<Parameter> Parser::parameter() {
 
     return std::make_unique<Parameter>(type, identifier, std::move(expr));
 }
+
+
+std::unique_ptr<Return> Parser::return_() {
+    advance(); // RETUNR
+
+    auto expr = expression();
+
+    return std::make_unique<Return>(std::move(expr));
+}
+
 
 
 

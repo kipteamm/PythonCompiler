@@ -2,6 +2,7 @@
 #define PYTHONCOMPILER_PARSER_H
 #include <vector>
 
+#include "../ast/nodes/Expression.h"
 #include "../ast/nodes/Statement.h"
 #include "../common/Token.h"
 
@@ -24,6 +25,8 @@ private:
     Token consume(TOKENTYPE type, const std::string& error);
     Token advance();
 
+    [[nodiscard]] std::unique_ptr<Scope> scope();
+
     // STATEMENTS
     [[nodiscard]] std::unique_ptr<Statement> statement();
 
@@ -31,6 +34,7 @@ private:
     [[nodiscard]] std::unique_ptr<Comment> comment();
     [[nodiscard]] std::unique_ptr<Function> function();
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
+    [[nodiscard]] std::unique_ptr<Return> return_();
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression();
@@ -40,7 +44,9 @@ private:
 
     const std::vector<Token>& tokens;
 
+    bool terminated = false;
     int current = 0;
+    int level = 0;
 };
 
 

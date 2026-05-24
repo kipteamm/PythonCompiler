@@ -13,6 +13,12 @@ std::vector<Token> Lexer::scan() {
         scanSource();
     }
 
+    // Dedent back to start level
+    while (indentStack.size() > 1) {
+        addToken(DEDENT);
+        indentStack.pop_back();
+    }
+
     tokens.emplace_back(END, "EOF");
     return tokens;
 }
@@ -59,6 +65,35 @@ bool Lexer::isAlpha(const char c) const {
 bool Lexer::isAlphaNumeric(char c) const {
     return isDigit(c) || isAlpha(c);
 }
+
+
+void Lexer::countIndents() {
+    int indent = 0;
+
+    while (peek() == ' ' || peek() == '\t') {
+        indent += advance() == '\t'? 4: 1;
+    }
+
+    const int top = indentStack.back();
+
+    if (indent == top) return;
+    if (indent > top) {
+        indentStack.push_back(indent);
+        addToken(INDENT);
+        return;
+    }
+
+    // indent < top
+    while (indentStack.size() > 1 && indent != indentStack[indentStack.size() - 1]) {
+        indentStack.pop_back();
+        addToken(DEDENT);
+    }
+
+    if (indentStack.back() == indent) return;
+
+    std::cerr << "IndentationError: unindent does not match any outer indentation level\n";
+}
+
 
 
 void Lexer::addStringOrChar(const char terminator) {
@@ -123,13 +158,11 @@ void Lexer::scanSource() {
     const char c = advance();
 
     switch (c) {
-        // Ignores
-        case ' ':
-        case '\n':
-            break;
+        case '\n': countIndents(); break;
 
-        // Whitespace
-        case '\t': addToken(TAB); break;
+        // Indentation is already handled, skip anything left
+        case ' ':
+        case '\t': break;
 
         // One character lexemes
         case '(': addToken(LEFT_PAREN); break;

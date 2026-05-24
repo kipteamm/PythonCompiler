@@ -4,6 +4,38 @@
 #include "Node.h"
 
 
+class Binary final : public Expression {
+public:
+    explicit Binary(std::unique_ptr<Expression> lhs, Token operation, std::unique_ptr<Expression> rhs);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] Expression* getLhs() const { return lhs.get(); }
+    [[nodiscard]] Expression* getRhs() const { return rhs.get(); }
+    [[nodiscard]] Token& getOperation() { return operation; }
+
+private:
+    std::unique_ptr<Expression> lhs;
+    std::unique_ptr<Expression> rhs;
+    Token operation;
+};
+
+
+class Unary final : public Expression {
+public:
+    explicit Unary(Token operation, std::unique_ptr<Expression> expr);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] Expression* getExpr() const { return expr.get(); }
+    [[nodiscard]] Token& getOperation() { return operation; }
+
+private:
+    std::unique_ptr<Expression> expr;
+    Token operation;
+};
+
+
 class Literal : public Expression {};
 
 

@@ -1,5 +1,7 @@
 #include "Parser.h"
 
+#include <iostream>
+
 
 Parser::Parser(const std::vector<Token> &tokens) : tokens(tokens) {}
 
@@ -146,15 +148,49 @@ std::unique_ptr<Return> Parser::return_() {
 }
 
 
+std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) {
+    // Just primaries no operations
+    if (!isOperation(peek().type) && lhs != nullptr) return lhs;
+
+    Token operation = consume(isOperation, "expected operator");
+    auto rhs = primary();
+
+    std::unique_ptr<Expression> expr;
+    if (lhs == nullptr)
+        expr = std::make_unique<Unary>(std::move(operation), std::move(rhs));
+    else if (rhs == nullptr)
+        expr= std::make_unique<Unary>(std::move(operation), std::move(lhs));
+    else
+        expr = std::make_unique<Binary>(std::move(lhs), std::move(operation), std::move(rhs));
+
+    return expression(std::move(expr));
+}
 
 
 std::unique_ptr<Expression> Parser::expression() {
-    const Token& token = advance();
-    if (isLiteral(token.type)) return literal(token);
+    // auto lhs = primary();
 
-    // FAKE
-    return std::make_unique<Int>(0);
+    return expression(std::move(primary()));
 }
+
+std::unique_ptr<Expression> Parser::primary() {
+    switch (peek().type) {
+        case IDENTIFIER: throw std::runtime_error("soon tm"); break;
+        case CHARACTER:  return std::make_unique<Char>(advance().lexeme[0]);
+        case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
+        case FRACTION:   return std::make_unique<Float>(std::stof(advance().lexeme));
+        case LEFT_PAREN: {
+            advance(); // (
+            auto expr = expression(std::move(primary()));
+            consume(RIGHT_PAREN, "missing closing bracket");
+
+            return expr;
+        }
+
+        default: return nullptr;
+    }
+}
+
 
 
 std::unique_ptr<Literal> Parser::literal(const Token &token) const {

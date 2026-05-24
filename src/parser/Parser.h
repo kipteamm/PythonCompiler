@@ -37,7 +37,9 @@ private:
     [[nodiscard]] std::unique_ptr<Return> return_();
 
     // EXPRESSIONS
+    [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
     [[nodiscard]] std::unique_ptr<Expression> expression();
+    [[nodiscard]] std::unique_ptr<Expression> primary();
 
     // LITERALS
     [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;

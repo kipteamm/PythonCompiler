@@ -1,0 +1,50 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_4;
+	node_4 [label="Assignment
+a: int", fontcolor="#d73a49"];
+	node_4 -> node_3;
+	node_3 [label="Binary(==)", fontcolor="#d73a49"];
+	node_1 [label="Int(5)", fontcolor="#005cc5"];
+	node_3 -> node_1;
+	node_2 [label="Int(5)", fontcolor="#005cc5"];
+	node_3 -> node_2;
+	node_0 -> node_12;
+	node_12 [label="Assignment
+b: int", fontcolor="#d73a49"];
+	node_12 -> node_11;
+	node_11 [label="Binary(==)", fontcolor="#d73a49"];
+	node_9 [label="Binary(==)", fontcolor="#d73a49"];
+	node_7 [label="Binary(==)", fontcolor="#d73a49"];
+	node_5 [label="Int(5)", fontcolor="#005cc5"];
+	node_7 -> node_5;
+	node_6 [label="Int(5)", fontcolor="#005cc5"];
+	node_7 -> node_6;
+	node_9 -> node_7;
+	node_8 [label="Int(5)", fontcolor="#005cc5"];
+	node_9 -> node_8;
+	node_11 -> node_9;
+	node_10 [label="Int(5)", fontcolor="#005cc5"];
+	node_11 -> node_10;
+	node_0 -> node_20;
+	node_20 [label="Assignment
+c: int", fontcolor="#d73a49"];
+	node_20 -> node_19;
+	node_19 [label="Binary(==)", fontcolor="#d73a49"];
+	node_15 [label="Binary(==)", fontcolor="#d73a49"];
+	node_13 [label="Int(5)", fontcolor="#005cc5"];
+	node_15 -> node_13;
+	node_14 [label="Int(5)", fontcolor="#005cc5"];
+	node_15 -> node_14;
+	node_19 -> node_15;
+	node_18 [label="Binary(==)", fontcolor="#d73a49"];
+	node_16 [label="Int(5)", fontcolor="#005cc5"];
+	node_18 -> node_16;
+	node_17 [label="Int(5)", fontcolor="#005cc5"];
+	node_18 -> node_17;
+	node_19 -> node_18;
+
+}

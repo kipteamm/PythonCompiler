@@ -13,6 +13,7 @@ enum TOKENTYPE {
 
     COLON, ARROW, INDENT, DEDENT,
 
+    // Operations
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
 
     // Literals
@@ -40,6 +41,10 @@ inline bool isLiteral(const TOKENTYPE type) {
 
 inline bool isType(const TOKENTYPE type) {
     return type >= CHAR && type <= STR;
+}
+
+inline bool isOperation(const TOKENTYPE type) {
+    return type >= BANG_EQUAL && type <= GREATER;
 }
 
 

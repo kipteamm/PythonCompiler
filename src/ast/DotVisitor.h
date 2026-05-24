@@ -18,6 +18,8 @@ public:
     void visit(Function *node) override;
     void visit(Parameter* node) override;
     void visit(Return* node) override;
+    void visit(Binary* node) override;
+    void visit(Unary* node) override;
     void visit(Char *node) override;
     void visit(Int *node) override;
     void visit(Float* node) override;

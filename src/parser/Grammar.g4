@@ -1,6 +1,7 @@
 /*
  * THIS GRAMMAR IS A REPRESENTATION OF WHAT THE PARSER CLASS DOES, IT IS NOT
  * ACTAULLY USED TO GENERATE THE PARSER CLASS. THAT IS ALSO THE REASON SOME
+ * ANTLR4 SYNTAX ERRORS CAN BE FOUND (CUZ I CAN'T BE BOTHERED)
 **/
 
 start: statement* EOF;
@@ -10,7 +11,8 @@ start: statement* EOF;
 statement
     : assignment
     | COMMENT
-    | function;
+    | function
+    | return;
 
 assignment: IDENTIFIER (':' TYPE)? ('=' expression)?;
 
@@ -19,8 +21,17 @@ parameters: parameter (',' parameter)*;
 parameter: IDENTIFIER ':' TYPE ('=' expression);
 
 expression
+    : unary
+    | binary;
+
+binary : primary ( (
+        '>>' | '<<' | '+' | '-' | '//' | '**'
+        '==' | '!=' | '<' | '>' | '<=' | '>='   // comparison
+        ) primary )*;
+
+primary
     : IDENTIFIER
     | CHARACTER
-    | FLOAT
     | INTEGER
-    | STRING;
+    | FLOAT
+    | '(' expression ')';

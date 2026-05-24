@@ -9,7 +9,8 @@ class Assignment;
 class Function;
 class Parameter;
 class Return;
-class Literal;
+class Binary;
+class Unary;
 class Char;
 class Int;
 class Float;
@@ -24,6 +25,8 @@ public:
     virtual void visit(Function* node) = 0;
     virtual void visit(Parameter* node) = 0;
     virtual void visit(Return* node) = 0;
+    virtual void visit(Binary* node) = 0;
+    virtual void visit(Unary* node) = 0;
     virtual void visit(Char* node) = 0;
     virtual void visit(Int* node) = 0;
     virtual void visit(Float* node) = 0;

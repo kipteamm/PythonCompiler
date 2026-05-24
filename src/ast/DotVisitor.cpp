@@ -87,12 +87,32 @@ void DotVisitor::visit(Return* node) {
 }
 
 
-void DotVisitor::visit(Int* node) {
-    oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+void DotVisitor::visit(Binary* node) {
+    oss << "\t" << *node << " [label=\"Binary(" << node->getOperation().lexeme << ")\", fontcolor=\"#d73a49\"];\n";
+
+    node->getLhs()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getLhs() << ";\n";
+
+    node->getRhs()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getRhs() << ";\n";
 }
+
+void DotVisitor::visit(Unary* node) {
+    oss << "\t" << *node << " [label=\"Binary(" << node->getOperation().lexeme << ")\", fontcolor=\"#d73a49\"];\n";
+
+    node->getExpr()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
+}
+
+
 
 void DotVisitor::visit(Char* node) {
     oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+
+
+void DotVisitor::visit(Int* node) {
+    oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
 void DotVisitor::visit(Float* node) {

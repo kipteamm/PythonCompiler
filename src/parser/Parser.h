@@ -38,7 +38,6 @@ private:
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
-    [[nodiscard]] std::unique_ptr<Expression> expression();
     [[nodiscard]] std::unique_ptr<Expression> primary();
 
     // LITERALS

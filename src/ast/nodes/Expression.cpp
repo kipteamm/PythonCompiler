@@ -10,6 +10,9 @@ Unary::Unary(Token operation, std::unique_ptr<Expression> expr)
     : expr(std::move(expr)), operation(std::move(operation)) {}
 
 
+Identifier::Identifier(std::string name) : name(std::move(name)) {};
+
+
 Char::Char(const char value) : value(value) {}
 
 Int::Int(const int value) : value(value) {}

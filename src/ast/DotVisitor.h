@@ -20,6 +20,7 @@ public:
     void visit(Return* node) override;
     void visit(Binary* node) override;
     void visit(Unary* node) override;
+    void visit(Identifier* node) override;
     void visit(Char *node) override;
     void visit(Int *node) override;
     void visit(Float* node) override;

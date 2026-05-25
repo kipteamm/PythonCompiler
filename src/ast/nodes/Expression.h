@@ -36,6 +36,19 @@ private:
 };
 
 
+class Identifier final : public Expression {
+public:
+    explicit Identifier(std::string name);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] std::string& getName() { return name; };
+
+private:
+    std::string name;
+};
+
+
 class Literal : public Expression {};
 
 

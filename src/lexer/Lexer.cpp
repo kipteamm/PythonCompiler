@@ -175,6 +175,7 @@ void Lexer::scanSource() {
         case '+': addToken(PLUS); break;
         case '*': addToken(STAR); break;
         case '/': addToken(SLASH); break;
+        case '~': addToken(INVERSE); break;
 
         // Dot OR Fraction floating point
         case '.':

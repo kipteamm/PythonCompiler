@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     scope->accept(&dotPrinter);
 
     // Save to file
-    std::ofstream outFile("../output/ast.dot");
+    std::ofstream outFile("output/ast.dot");
     outFile << dotPrinter.getDot();
     outFile.close();
 

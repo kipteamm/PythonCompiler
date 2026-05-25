@@ -12,4 +12,3 @@ add_executable(PythonCompiler main.cpp
         src/ast/nodes/Expression.cpp
         src/ast/ASTVisitor.cpp
         src/ast/DotVisitor.cpp)
-w

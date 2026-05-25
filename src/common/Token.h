@@ -9,11 +9,14 @@
 enum TOKENTYPE {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET,
 
-    COMMA, DOT, MINUS, PLUS, SLASH, STAR,
+    COLON, ARROW, INDENT, DEDENT, COMMA, DOT,
 
-    COLON, ARROW, INDENT, DEDENT,
-
-    // Operations
+    // Unary
+    INVERSE,
+    // Both
+    MINUS, PLUS,
+    // Binary
+    SLASH, STAR,
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
 
     // Literals
@@ -43,8 +46,12 @@ inline bool isType(const TOKENTYPE type) {
     return type >= CHAR && type <= STR;
 }
 
+inline bool isUnaryOperation(const TOKENTYPE type) {
+    return type >= INVERSE && type <= PLUS;
+}
+
 inline bool isOperation(const TOKENTYPE type) {
-    return type >= BANG_EQUAL && type <= GREATER;
+    return type >= INVERSE && type <= GREATER;
 }
 
 
@@ -101,16 +108,18 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
 
         case COMMA:          return "COMMA";
         case DOT:            return "DOT";
-        case MINUS:          return "MINUS";
-        case PLUS:           return "PLUS";
-        case SLASH:          return "SLASH";
-        case STAR:           return "STAR";
 
         case COLON:          return "COLON";
         case ARROW:          return "ARROW";
         case INDENT:         return "INDENT";
         case DEDENT:         return "DEDENT";
 
+        case INVERSE:          return "INVERSE";
+        case MINUS:          return "MINUS";
+        case PLUS:           return "PLUS";
+
+        case STAR:           return "STAR";
+        case SLASH:          return "SLASH";
         case BANG_EQUAL:     return "BANG_EQUAL";
         case BANG:           return "BANG";
         case EQUAL_EQUAL:    return "EQUAL_EQUAL";

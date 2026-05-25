@@ -105,6 +105,10 @@ void DotVisitor::visit(Unary* node) {
 }
 
 
+void DotVisitor::visit(Identifier* node) {
+    oss << "\t" << *node << " [label=\"ID(" << node->getName() << ")\"];\n";
+}
+
 
 void DotVisitor::visit(Char* node) {
     oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";

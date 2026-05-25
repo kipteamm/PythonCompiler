@@ -11,7 +11,7 @@ DotVisitor::DotVisitor() {
 
 
 std::string DotVisitor::getDot() {
-    return oss.str() + "\n} ";
+    return oss.str() + "\n}";
 }
 
 

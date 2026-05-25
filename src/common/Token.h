@@ -14,9 +14,9 @@ enum TOKENTYPE {
     // Unary
     INVERSE,
     // Both
-    MINUS, PLUS,
+    MINUS, PLUS, STAR, EXPONENT,
     // Binary
-    SLASH, STAR,
+    SLASH, LEFT_SHIFT, RIGHT_SHIFT, FLOOR,
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
 
     // Literals
@@ -114,11 +114,12 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case INDENT:         return "INDENT";
         case DEDENT:         return "DEDENT";
 
-        case INVERSE:          return "INVERSE";
+        case INVERSE:        return "INVERSE";
         case MINUS:          return "MINUS";
         case PLUS:           return "PLUS";
 
         case STAR:           return "STAR";
+        case EXPONENT:       return "EXPONENT";
         case SLASH:          return "SLASH";
         case BANG_EQUAL:     return "BANG_EQUAL";
         case BANG:           return "BANG";
@@ -128,6 +129,8 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case LESS:           return "LESS";
         case GREATER_EQUAL:  return "GREATER_EQUAL";
         case GREATER:        return "GREATER";
+        case LEFT_SHIFT:     return "LEFT_SHIFT";
+        case RIGHT_SHIFT:    return "RIGHT_SHIFT";
 
         case CHARACTER:      return "CHARACTER";
         case STRING:         return "STRING";

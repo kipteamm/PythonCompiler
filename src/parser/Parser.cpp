@@ -42,7 +42,7 @@ std::unique_ptr<Scope> Parser::start() {
     auto scope = std::make_unique<Scope>();
 
     while (!match(END)) {
-        scope->addStatement(statement());
+        scope->addStatement(statement(true));
     }
 
     return scope;
@@ -55,7 +55,7 @@ std::unique_ptr<Scope> Parser::scope() {
     auto scope = std::make_unique<Scope>();
 
     while (!match(DEDENT)) {
-        scope->addStatement(statement());
+        scope->addStatement(statement(false));
     }
 
     return scope;
@@ -63,7 +63,7 @@ std::unique_ptr<Scope> Parser::scope() {
 
 
 
-std::unique_ptr<Statement> Parser::statement() {
+std::unique_ptr<Statement> Parser::statement(const bool global) {
     switch (peek().type) {
         // Both declarations and assignments are rather ambigious in Python, so
         // we assume everything is an assignment. This is later properly
@@ -71,7 +71,11 @@ std::unique_ptr<Statement> Parser::statement() {
         case IDENTIFIER:  return assignment();
         case DEF:         return function();
         case COMMENT:     return comment();
-        case RETURN:      return return_();
+        case RETURN: {
+            if (!global) return return_();
+
+            throw std::runtime_error("return outside of function");
+        }
         default:
             throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
     }
@@ -176,7 +180,7 @@ std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) 
 
 std::unique_ptr<Expression> Parser::primary() {
     switch (peek().type) {
-        case IDENTIFIER: return std::make_unique<Identifier>(advance().lexeme); break;
+        case IDENTIFIER: return std::make_unique<Identifier>(advance().lexeme);
         case CHARACTER:  return std::make_unique<Char>(advance().lexeme[0]);
         case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
         case FRACTION:   return std::make_unique<Float>(std::stof(advance().lexeme));

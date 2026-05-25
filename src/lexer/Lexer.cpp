@@ -173,8 +173,6 @@ void Lexer::scanSource() {
         case ':': addToken(COLON); break;
         case ',': addToken(COMMA); break;
         case '+': addToken(PLUS); break;
-        case '*': addToken(STAR); break;
-        case '/': addToken(SLASH); break;
         case '~': addToken(INVERSE); break;
 
         // Dot OR Fraction floating point
@@ -189,11 +187,15 @@ void Lexer::scanSource() {
         case '=':
             addToken(match('=')? EQUAL_EQUAL: EQUAL); break;
         case '<':
-            addToken(match('=')? LESS_EQUAL: LESS); break;
+            addToken(match('=')? LESS_EQUAL: match('<')? LEFT_SHIFT: LESS); break;
         case '>':
-            addToken(match('=')? GREATER_EQUAL: GREATER); break;
+            addToken(match('=')? GREATER_EQUAL: match('>')? RIGHT_SHIFT: GREATER); break;
         case '-':
             addToken(match('>')? ARROW: MINUS); break;
+        case '*':
+            addToken(match('*')? EXPONENT: STAR); break;
+        case '/':
+            addToken(match('/')? FLOOR: SLASH); break;
 
         // String literals
         case '"':

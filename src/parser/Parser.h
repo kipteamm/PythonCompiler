@@ -28,7 +28,7 @@ private:
     [[nodiscard]] std::unique_ptr<Scope> scope();
 
     // STATEMENTS
-    [[nodiscard]] std::unique_ptr<Statement> statement();
+    [[nodiscard]] std::unique_ptr<Statement> statement(bool global);
 
     [[nodiscard]] std::unique_ptr<Assignment> assignment();
     [[nodiscard]] std::unique_ptr<Comment> comment();

@@ -21,13 +21,15 @@ parameters: parameter (',' parameter)*;
 parameter: IDENTIFIER ':' TYPE ('=' expression);
 
 expression
-    : unary
-    | binary;
+    : primary
+    | composite;
 
-binary : primary ( (
+composite : primary? (
+        '/'  | '*'  |
         '>>' | '<<' | '+' | '-' | '//' | '**'
-        '==' | '!=' | '<' | '>' | '<=' | '>='   // comparison
-        ) primary )*;
+        '==' | '!=' | '<' | '>' | '<=' | '>='
+        ) primary?;     // both primaries are optional, but the parser enforces
+                        // at least 1
 
 primary
     : IDENTIFIER

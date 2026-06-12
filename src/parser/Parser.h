@@ -4,6 +4,7 @@
 
 #include "../ast/nodes/Expression.h"
 #include "../ast/nodes/Statement.h"
+#include "../symbol/SymbolTable.h"
 #include "../common/Token.h"
 
 
@@ -13,7 +14,7 @@ using Assertion = bool(*)(TOKENTYPE);
 // A Recursive Descent parser
 class Parser {
 public:
-    explicit Parser(const std::vector<Token>& tokens);
+    explicit Parser(const std::vector<Token>& tokens, SymbolTable* table);
 
     [[nodiscard]] std::unique_ptr<Scope> start();
 
@@ -44,6 +45,7 @@ private:
     [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;
 
     const std::vector<Token>& tokens;
+    SymbolTable* table;
 
     bool terminated = false;
     int current = 0;

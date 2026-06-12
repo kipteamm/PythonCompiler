@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Parser::Parser(const std::vector<Token> &tokens) : tokens(tokens) {}
+Parser::Parser(const std::vector<Token> &tokens, SymbolTable* table) : tokens(tokens), table(table) {}
 
 
 Token Parser::peek() const {
@@ -53,6 +53,7 @@ std::unique_ptr<Scope> Parser::scope() {
     consume(INDENT, "wrong indentation level");
 
     auto scope = std::make_unique<Scope>();
+    table = table->newScope();
 
     while (!match(DEDENT)) {
         scope->addStatement(statement(false));
@@ -87,6 +88,14 @@ std::unique_ptr<Assignment> Parser::assignment() {
     const Token type = match(COLON)
         ? consume(isType, "expected type")
         : Token(UNKNOWN, "UNKNOWN");
+
+    const auto symbol = table->getSymbol(identifier.lexeme);
+    if (symbol && type.type != symbol->type)
+        throw std::runtime_error("variable redeclaration");
+
+    if (!symbol) {
+        table->addSymbol(identifier.lexeme, type.type);
+    }
 
     std::unique_ptr<Expression> expr = nullptr;
     if (match(EQUAL)) expr = expression(std::move(primary()));

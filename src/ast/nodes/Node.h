@@ -9,7 +9,7 @@
 
 class Node {
 public:
-    Node() : id(nextId++) {};
+    Node() : id(nodeId++) {};
     virtual ~Node() = default;
 
     virtual void accept(ASTVisitor* visitor) = 0;
@@ -21,7 +21,7 @@ public:
 private:
     int id;
 
-    inline static int nextId = 0;
+    inline static int nodeId = 0;
 };
 
 

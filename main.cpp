@@ -1,9 +1,32 @@
 #include <fstream>
 #include <iostream>
 
-#include "src/ast/DotVisitor.h"
+#include "src/ast/ASTRenderer.h"
 #include "src/lexer/Lexer.h"
 #include "src/parser/Parser.h"
+
+
+void debugTable(SymbolTable& table) {
+    std::ofstream outFile("output/symbol.dot");
+
+    outFile << "digraph symbol {\n";
+    outFile << "\tsplines=true; nodesep=0.5; ranksep=0.5\n\n";
+    outFile << "\tnode [shape=box, fontname=\"Courier\"]\n\n";
+    outFile << table.getDot();
+    outFile << "\n}";
+
+    outFile.close();
+}
+
+
+void debugAST(Scope& scope) {
+    ASTRenderer dotPrinter;
+    scope.accept(&dotPrinter);
+
+    std::ofstream outFile("output/ast.dot");
+    outFile << dotPrinter.getDot();
+    outFile.close();
+}
 
 
 int main(int argc, char* argv[]) {
@@ -33,17 +56,13 @@ int main(int argc, char* argv[]) {
     }
     std::cout << std::endl;
 
-    Parser parser(tokens);
+    auto table = std::make_unique<SymbolTable>();
+
+    Parser parser(tokens, table.get());
     auto scope = parser.start();
-
-    // Create the debug DOT visualization
-    DotVisitor dotPrinter;
-    scope->accept(&dotPrinter);
-
-    // Save to file
-    std::ofstream outFile("output/ast.dot");
-    outFile << dotPrinter.getDot();
-    outFile.close();
+    
+    debugTable(*table);
+    debugAST(*scope);
 
     return 0;
 }

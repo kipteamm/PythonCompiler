@@ -1,21 +1,21 @@
-#include "DotVisitor.h"
+#include "ASTRenderer.h"
 
 #include "nodes/Expression.h"
 #include "nodes/Statement.h"
 
 
-DotVisitor::DotVisitor() {
+ASTRenderer::ASTRenderer() {
     oss << "digraph AST {\n";
     oss << "\tsplines=true; nodesep=0.5; ranksep=0.5;\n\n\tnode [shape=box, fontname=\"Courier\"];\n";
 }
 
 
-std::string DotVisitor::getDot() {
+std::string ASTRenderer::getDot() const {
     return oss.str() + "\n}";
 }
 
 
-void DotVisitor::visit(Scope *node) {
+void ASTRenderer::visit(Scope *node) {
     oss << "\t" << *node << "[label=\"Scope\"];\n";
 
     for (const auto& stmt : node->getStatements()) {
@@ -25,7 +25,7 @@ void DotVisitor::visit(Scope *node) {
 }
 
 
-void DotVisitor::visit(Assignment* node) {
+void ASTRenderer::visit(Assignment* node) {
     std::string label = "Assignment\n" + node->getIdentifier().lexeme;
     if (node->getType().type != UNKNOWN) {
         label += ": " + node->getType().lexeme;
@@ -40,7 +40,7 @@ void DotVisitor::visit(Assignment* node) {
 }
 
 
-void DotVisitor::visit(Comment* node) {
+void ASTRenderer::visit(Comment* node) {
     std::string cleanComment = node->getComment();
     size_t pos = 0;
 
@@ -54,7 +54,7 @@ void DotVisitor::visit(Comment* node) {
 }
 
 
-void DotVisitor::visit(Function* node) {
+void ASTRenderer::visit(Function* node) {
     oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
     for (const std::unique_ptr<Parameter>& param : node->getParameters()) {
@@ -68,7 +68,7 @@ void DotVisitor::visit(Function* node) {
 }
 
 
-void DotVisitor::visit(Parameter* node) {
+void ASTRenderer::visit(Parameter* node) {
     oss << "\t" << *node << " [label=\"Parameter\n" << node->getIdentifier().lexeme << ": " << node->getType().lexeme << "\", fontcolor=\"#005cc5\"];\n";
 
     if (node->getInitValue() == nullptr) return;
@@ -78,7 +78,7 @@ void DotVisitor::visit(Parameter* node) {
 }
 
 
-void DotVisitor::visit(Return* node) {
+void ASTRenderer::visit(Return* node) {
     oss << "\t" << *node << " [label=\"Return\", fontcolor=\"#d73a49\"];\n";
 
     node->getExpr()->accept(this);
@@ -87,7 +87,7 @@ void DotVisitor::visit(Return* node) {
 }
 
 
-void DotVisitor::visit(Binary* node) {
+void ASTRenderer::visit(Binary* node) {
     oss << "\t" << *node << " [label=\"Binary(" << node->getOperation().lexeme << ")\", fontcolor=\"#d73a49\"];\n";
 
     node->getLhs()->accept(this);
@@ -97,7 +97,7 @@ void DotVisitor::visit(Binary* node) {
     oss << "\t" << *node << " -> " << *node->getRhs() << ";\n";
 }
 
-void DotVisitor::visit(Unary* node) {
+void ASTRenderer::visit(Unary* node) {
     oss << "\t" << *node << " [label=\"Binary(" << node->getOperation().lexeme << ")\", fontcolor=\"#d73a49\"];\n";
 
     node->getExpr()->accept(this);
@@ -105,20 +105,20 @@ void DotVisitor::visit(Unary* node) {
 }
 
 
-void DotVisitor::visit(Identifier* node) {
+void ASTRenderer::visit(Identifier* node) {
     oss << "\t" << *node << " [label=\"ID(" << node->getName() << ")\"];\n";
 }
 
 
-void DotVisitor::visit(Char* node) {
+void ASTRenderer::visit(Char* node) {
     oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
 
-void DotVisitor::visit(Int* node) {
+void ASTRenderer::visit(Int* node) {
     oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
-void DotVisitor::visit(Float* node) {
+void ASTRenderer::visit(Float* node) {
     oss << "\t" << *node << " [label=\"Float(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }

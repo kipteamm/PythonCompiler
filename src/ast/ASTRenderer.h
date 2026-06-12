@@ -6,11 +6,11 @@
 #include "ASTVisitor.h"
 
 
-class DotVisitor final : public ASTVisitor {
+class ASTRenderer final : public ASTVisitor {
 public:
-    DotVisitor();
+    ASTRenderer();
 
-    std::string getDot();
+    std::string getDot() const;
 
     void visit(Scope *node) override;
     void visit(Comment *node) override;

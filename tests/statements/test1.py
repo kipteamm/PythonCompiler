@@ -1,8 +1,8 @@
 if False:
-    print("True")
+    print(2)
 
 elif False:
-    print("True too")
+    print(1)
 
 else:
-    print("False")
+    print(0)

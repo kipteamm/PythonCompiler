@@ -15,9 +15,10 @@ class Return;
 class Binary;
 class Unary;
 class Identifier;
+class Bool;
 class Char;
-class Int;
 class Float;
+class Int;
 
 
 class ASTVisitor {
@@ -35,9 +36,10 @@ public:
     virtual void visit(Binary* node) = 0;
     virtual void visit(Unary* node) = 0;
     virtual void visit(Identifier* node) = 0;
+    virtual void visit(Bool* node) = 0;
     virtual void visit(Char* node) = 0;
-    virtual void visit(Int* node) = 0;
     virtual void visit(Float* node) = 0;
+    virtual void visit(Int* node) = 0;
 };
 
 

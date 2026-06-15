@@ -27,14 +27,17 @@ expression
 
 composite : primary? (
         '/'  | '*'  |
-        '>>' | '<<' | '+' | '-' | '//' | '**'
-        '==' | '!=' | '<' | '>' | '<=' | '>='
+        '>>' | '<<' | '+' | '-' | '//' | '**' |
+        '==' | '!=' | '<' | '>' | '<=' | '>=' |
+        'AND'| 'OR'
         ) primary?;     // both primaries are optional, but the parser enforces
                         // at least 1
 
 primary
     : IDENTIFIER '(' arguments ')'
     | IDENTIFIER
+    | 'True'
+    | 'False'
     | CHARACTER
     | INTEGER
     | FLOAT

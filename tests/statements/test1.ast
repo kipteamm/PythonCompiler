@@ -1,0 +1,44 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_17;
+	node_17 [label="If", fontcolor="#d73a49"];
+	node_1 [label="Bool(0)", fontcolor="#005cc5"];
+	node_17 -> node_1;
+	node_2[label="Scope"];
+	node_2 -> node_5;
+	node_5 [label="Discard", fontcolor="#d6d6d6"];
+	node_4 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_3 [label="Int(2)", fontcolor="#005cc5"];
+	node_4 -> node_3;
+	node_5 -> node_4;
+	node_17 -> node_2;
+	node_6[label="Scope"];
+	node_6 -> node_16;
+	node_16 [label="If", fontcolor="#d73a49"];
+	node_7 [label="Bool(0)", fontcolor="#005cc5"];
+	node_16 -> node_7;
+	node_8[label="Scope"];
+	node_8 -> node_11;
+	node_11 [label="Discard", fontcolor="#d6d6d6"];
+	node_10 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_9 [label="Int(1)", fontcolor="#005cc5"];
+	node_10 -> node_9;
+	node_11 -> node_10;
+	node_16 -> node_8;
+	node_12[label="Scope"];
+	node_12 -> node_15;
+	node_15 [label="Discard", fontcolor="#d6d6d6"];
+	node_14 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_13 [label="Int(0)", fontcolor="#005cc5"];
+	node_14 -> node_13;
+	node_15 -> node_14;
+	node_16 -> node_12;
+	node_17 -> node_6;
+
+}

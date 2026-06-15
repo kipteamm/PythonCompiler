@@ -143,8 +143,18 @@ void ASTRenderer::visit(Identifier* node) {
 }
 
 
+void ASTRenderer::visit(Bool* node) {
+    oss << "\t" << *node << " [label=\"Bool(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+
+
 void ASTRenderer::visit(Char* node) {
     oss << "\t" << *node << " [label=\"Char(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+
+
+void ASTRenderer::visit(Float* node) {
+    oss << "\t" << *node << " [label=\"Float(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
 
@@ -152,6 +162,3 @@ void ASTRenderer::visit(Int* node) {
     oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
-void ASTRenderer::visit(Float* node) {
-    oss << "\t" << *node << " [label=\"Float(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
-}

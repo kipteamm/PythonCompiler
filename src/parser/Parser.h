@@ -46,7 +46,7 @@ private:
     [[nodiscard]] std::unique_ptr<Expression> primary();
 
     // LITERALS
-    [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;
+    // [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;
 
     const std::vector<Token>& tokens;
 

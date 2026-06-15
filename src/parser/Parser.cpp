@@ -230,15 +230,23 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
 std::unique_ptr<Expression> Parser::primary() {
     switch (peek().type) {
         case IDENTIFIER: {
+            // Differentiate between a variable and a function call (by checking
+            // for a following '('
+
             const auto identifier = advance();
             if (!match(LEFT_PAREN))
                 return std::make_unique<Identifier>(identifier.lexeme);
 
             return functionCall(identifier);
         }
+
+        case FALSE:
+        case TRUE:       return std::make_unique<Bool>(advance().type == TRUE);
+
         case CHARACTER:  return std::make_unique<Char>(advance().lexeme[0]);
-        case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
         case FRACTION:   return std::make_unique<Float>(std::stof(advance().lexeme));
+        case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
+
         // '(' expression ')'
         case LEFT_PAREN: {
             advance(); // (
@@ -253,13 +261,14 @@ std::unique_ptr<Expression> Parser::primary() {
 }
 
 
-
-std::unique_ptr<Literal> Parser::literal(const Token &token) const {
-    switch (token.type) {
-        case CHARACTER:  return std::make_unique<Char>(token.lexeme[0]);
-        case INTEGER:    return std::make_unique<Int>(std::stoi(token.lexeme));
-        case FRACTION:   return std::make_unique<Float>(std::stof(token.lexeme));
-        default:
-            throw std::runtime_error("Failed to parse literal, got " + tokenTypeToString(token.type) + " at " + std::to_string(current));
-    }
-}
+// std::unique_ptr<Literal> Parser::literal(const Token &token) const {
+//     switch (token.type) {
+//         case FALSE:      return std::make_unique<Bool>(false);
+//         case TRUE:       return std::make_unique<Bool>(true);
+//         case CHARACTER:  return std::make_unique<Char>(token.lexeme[0]);
+//         case FRACTION:   return std::make_unique<Float>(std::stof(token.lexeme));
+//         case INTEGER:    return std::make_unique<Int>(std::stoi(token.lexeme));
+//         default:
+//             throw std::runtime_error("Failed to parse literal, got " + tokenTypeToString(token.type) + " at " + std::to_string(current));
+//     }
+// }

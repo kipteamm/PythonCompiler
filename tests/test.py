@@ -1,8 +1,8 @@
-if 0:
-    print(0)
+if False:
+    print(2)
 
-elif 0:
+elif False:
     print(1)
 
 else:
-    print(2)
+    print(0)

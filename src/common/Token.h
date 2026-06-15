@@ -18,15 +18,16 @@ enum TOKENTYPE {
     // Binary
     SLASH, LEFT_SHIFT, RIGHT_SHIFT, FLOOR,
     BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
+    AND, OR,
 
     // Literals
     CHARACTER, FRACTION, INTEGER, STRING,
     IDENTIFIER,
 
     // Keywords:
-    FALSE, NONE, TRUE, AND, AS, ASSERT, ASYNC, AWAIT, BREAK, CLASS,
+    FALSE, NONE, TRUE, AS, ASSERT, ASYNC, AWAIT, BREAK, CLASS,
     CONTINUE, DEF, DEL, ELIF, ELSE, EXCEPT, FINALLY, FOR, FROM,
-    GLOBAL, IF, IMPORT, IN, IS, LAMBDA, NONLOCAL, NOT, OR, PASS,
+    GLOBAL, IF, IMPORT, IN, IS, LAMBDA, NONLOCAL, NOT, PASS,
     RAISE, RETURN, TRY, WHILE, WITH, YIELD,
 
     // TYPES
@@ -51,7 +52,7 @@ inline bool isUnaryOperation(const TOKENTYPE type) {
 }
 
 inline bool isOperation(const TOKENTYPE type) {
-    return type >= INVERSE && type <= GREATER;
+    return type >= INVERSE && type <= OR;
 }
 
 

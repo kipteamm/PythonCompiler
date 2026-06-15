@@ -69,6 +69,19 @@ private:
 class Literal : public Expression {};
 
 
+class Bool final : public Literal {
+public:
+    explicit Bool(bool value);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] bool getValue() const { return value; }
+
+private:
+    bool value;
+};
+
+
 class Char final : public Literal {
 public:
     explicit Char(char value);
@@ -82,19 +95,6 @@ private:
 };
 
 
-class Int final : public Literal {
-public:
-    explicit Int(int value);
-
-    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
-
-    [[nodiscard]] int getValue() const { return value; }
-
-private:
-    int value;
-};
-
-
 class Float final : public Literal {
 public:
     explicit Float(float value);
@@ -105,6 +105,19 @@ public:
 
 private:
     float value;
+};
+
+
+class Int final : public Literal {
+public:
+    explicit Int(int value);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] int getValue() const { return value; }
+
+private:
+    int value;
 };
 
 

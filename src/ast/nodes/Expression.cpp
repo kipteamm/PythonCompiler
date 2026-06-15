@@ -17,8 +17,11 @@ FunctionCall::FunctionCall(Token identifier, std::vector<std::unique_ptr<Express
 Identifier::Identifier(std::string name) : name(std::move(name)) {};
 
 
+Bool::Bool(const bool value) : value(value) {}
+
 Char::Char(const char value) : value(value) {}
+
+Float::Float(const float value) : value(value) {}
 
 Int::Int(const int value) : value(value) {}
 
-Float::Float(const float value) : value(value) {}

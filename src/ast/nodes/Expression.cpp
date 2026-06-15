@@ -10,6 +10,10 @@ Unary::Unary(Token operation, std::unique_ptr<Expression> expr)
     : expr(std::move(expr)), operation(std::move(operation)) {}
 
 
+FunctionCall::FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments)
+    : identifier(std::move(identifier)), arguments(std::move(arguments)) {}
+
+
 Identifier::Identifier(std::string name) : name(std::move(name)) {};
 
 

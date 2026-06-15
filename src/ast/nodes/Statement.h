@@ -58,6 +58,19 @@ private:
 };
 
 
+class Discard final : public Statement {
+public:
+    explicit Discard(std::unique_ptr<Expression> expr);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Expression* getExpr() const { return expr.get(); }
+
+private:
+    std::unique_ptr<Expression> expr;
+};
+
+
 class Function final : public Statement {
 public:
     explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
@@ -74,6 +87,23 @@ private:
     Token returnType;
     std::vector<std::unique_ptr<Parameter>> parameters;
     std::unique_ptr<Scope> body;
+};
+
+
+class If final : public Statement {
+public:
+    explicit If(std::unique_ptr<Expression> condition, std::unique_ptr<Scope> thenScope, std::unique_ptr<Scope> elseScope);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Expression* getCondition() const { return condition.get(); }
+    [[nodiscard]] Scope* getThenScope() const { return thenScope.get(); }
+    [[nodiscard]] Scope* getElseScope() const { return elseScope.get(); }
+
+private:
+    std::unique_ptr<Expression> condition;
+    std::unique_ptr<Scope> thenScope;
+    std::unique_ptr<Scope> elseScope;
 };
 
 

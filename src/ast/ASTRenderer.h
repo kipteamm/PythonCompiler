@@ -15,8 +15,11 @@ public:
     void visit(Scope *node) override;
     void visit(Comment *node) override;
     void visit(Assignment *node) override;
+    void visit(Discard *node) override;
     void visit(Function *node) override;
+    void visit(FunctionCall *node) override;
     void visit(Parameter* node) override;
+    void visit(If* node) override;
     void visit(Return* node) override;
     void visit(Binary* node) override;
     void visit(Unary* node) override;

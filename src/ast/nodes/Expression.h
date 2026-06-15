@@ -1,6 +1,8 @@
 #ifndef PYTHONCOMPILER_EXPRESSION_H
 #define PYTHONCOMPILER_EXPRESSION_H
 
+#include <vector>
+
 #include "Node.h"
 
 
@@ -33,6 +35,21 @@ public:
 private:
     std::unique_ptr<Expression> expr;
     Token operation;
+};
+
+
+class FunctionCall final : public Expression {
+public:
+    explicit FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getArguments() { return arguments; }
+
+private:
+    Token identifier;
+    std::vector<std::unique_ptr<Expression>> arguments;
 };
 
 

@@ -11,8 +11,16 @@ Assignment::Assignment(Token identifier, Token type, std::unique_ptr<Expression>
     : identifier(std::move(identifier)), type(std::move(type)), expr(std::move(expr)) {}
 
 
+Discard::Discard(std::unique_ptr<Expression> expr)
+    : expr(std::move(expr)) {}
+
+
 Function::Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body)
     : name(std::move(name)), returnType(std::move(returnType)), parameters(std::move(parameters)), body(std::move(body)) {}
+
+
+If::If(std::unique_ptr<Expression> condition, std::unique_ptr<Scope> thenScope, std::unique_ptr<Scope> elseScope)
+    : condition(std::move(condition)), thenScope(std::move(thenScope)), elseScope(std::move(elseScope)) {}
 
 
 Return::Return(std::unique_ptr<Expression> expr)

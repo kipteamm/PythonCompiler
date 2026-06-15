@@ -6,9 +6,11 @@ SymbolTable::SymbolTable(const SymbolTable *parent) : parent(parent), id(tableId
 
 SymbolTable* SymbolTable::newScope() {
     auto table = std::make_unique<SymbolTable>(this);
+    SymbolTable* rawPtr = table.get();
+
     this->children.emplace(std::move(table));
 
-    return table.get();
+    return rawPtr;
 }
 
 

@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Parser::Parser(const std::vector<Token> &tokens, SymbolTable* table) : tokens(tokens), table(table) {}
+Parser::Parser(const std::vector<Token> &tokens) : tokens(tokens) {}
 
 
 Token Parser::peek() const {
@@ -53,7 +53,6 @@ std::unique_ptr<Scope> Parser::scope() {
     consume(INDENT, "wrong indentation level");
 
     auto scope = std::make_unique<Scope>();
-    table = table->newScope();
 
     while (!match(DEDENT)) {
         scope->addStatement(statement(false));
@@ -63,20 +62,35 @@ std::unique_ptr<Scope> Parser::scope() {
 }
 
 
-
 std::unique_ptr<Statement> Parser::statement(const bool global) {
     switch (peek().type) {
-        // Both declarations and assignments are rather ambigious in Python, so
-        // we assume everything is an assignment. This is later properly
-        // handled to assure that the first assignment is also a declaration.
-        case IDENTIFIER:  return assignment();
+        case IDENTIFIER: {
+            // This could be either a standalone expression, or a variable
+            // assignment/declaration. Depends on what follows, eg;
+
+            if (tokens.at(current + 1).type == EQUAL || tokens.at(current + 1).type == COLON) {
+                // Both declarations and assignments are rather ambigious in Python, so
+                // we assume everything is an assignment. This is later properly
+                // handled to assure that the first assignment is also a declaration.
+                return assignment();
+            }
+
+            // Global expressions are technically discarded expressions, tho
+            // FunctionCalls do still have effect on the program
+            auto expr = expression(std::move(primary()));
+            return std::make_unique<Discard>(std::move(expr));
+        }
+
         case DEF:         return function();
         case COMMENT:     return comment();
+        case IF:          return if_();
+
         case RETURN: {
             if (!global) return return_();
 
             throw std::runtime_error("return outside of function");
         }
+
         default:
             throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
     }
@@ -88,14 +102,6 @@ std::unique_ptr<Assignment> Parser::assignment() {
     const Token type = match(COLON)
         ? consume(isType, "expected type")
         : Token(UNKNOWN, "UNKNOWN");
-
-    const auto symbol = table->getSymbol(identifier.lexeme);
-    if (symbol && type.type != symbol->type)
-        throw std::runtime_error("variable redeclaration");
-
-    if (!symbol) {
-        table->addSymbol(identifier.lexeme, type.type);
-    }
 
     std::unique_ptr<Expression> expr = nullptr;
     if (match(EQUAL)) expr = expression(std::move(primary()));
@@ -121,12 +127,8 @@ std::unique_ptr<Function> Parser::function() {
     while (!match(RIGHT_PAREN)) {
         parameters.push_back(parameter());
 
-        // If the next token is a comma we build a new parameter, if next token
-        // is a RIGHT_PAREN we found all paremeters.
-        if (match(COMMA) || peek().type == RIGHT_PAREN) continue;
-
-        // expected ',' or ')' in parameter list
-        break;
+        if (peek().type == RIGHT_PAREN) continue;
+        consume(COMMA, "Expected next argument");
     }
 
     consume(ARROW, "expected '->' return type specifier");
@@ -161,6 +163,29 @@ std::unique_ptr<Return> Parser::return_() {
 }
 
 
+std::unique_ptr<If> Parser::if_() {
+    advance();
+
+    auto condition = expression(std::move(primary()));
+    consume(COLON, "expected ':'");
+
+    auto thenScope = scope();
+    std::unique_ptr<Scope> elseScope = nullptr;
+
+    if (match(ELSE)) {
+        consume(COLON, "expected ':'");
+        elseScope = scope();
+    } else if (peek().type == ELIF) {
+        elseScope = std::make_unique<Scope>();
+
+        auto elif = if_();
+        elseScope->addStatement(std::move(elif));
+    }
+
+    return std::make_unique<If>(std::move(condition), std::move(thenScope), std::move(elseScope));
+}
+
+
 std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) {
     // Just primaries no operations
     if (!isOperation(peek().type) && lhs != nullptr) return lhs;
@@ -173,7 +198,7 @@ std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) 
         if (!isUnaryOperation(operation.type))
             throw std::runtime_error("not a unary operation");
 
-        expr = std::make_unique<Unary>(std::move(operation), std::move(lhs));
+        expr = std::make_unique<Unary>(std::move(operation), std::move(rhs));
     } else if (rhs == nullptr) {
         throw std::runtime_error("invalid syntax");
     } else {
@@ -187,9 +212,30 @@ std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) 
 }
 
 
+std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
+    std::vector<std::unique_ptr<Expression>> arguments;
+
+    while (!match(RIGHT_PAREN)) {
+        arguments.push_back(expression(std::move(primary())));
+
+        if (peek().type == RIGHT_PAREN) continue;
+        consume(COMMA, "Expected next argument");
+    }
+
+    return std::make_unique<FunctionCall>(token, std::move(arguments));
+}
+
+
+
 std::unique_ptr<Expression> Parser::primary() {
     switch (peek().type) {
-        case IDENTIFIER: return std::make_unique<Identifier>(advance().lexeme);
+        case IDENTIFIER: {
+            const auto identifier = advance();
+            if (!match(LEFT_PAREN))
+                return std::make_unique<Identifier>(identifier.lexeme);
+
+            return functionCall(identifier);
+        }
         case CHARACTER:  return std::make_unique<Char>(advance().lexeme[0]);
         case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
         case FRACTION:   return std::make_unique<Float>(std::stof(advance().lexeme));

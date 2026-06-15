@@ -25,6 +25,20 @@ void ASTRenderer::visit(Scope *node) {
 }
 
 
+void ASTRenderer::visit(Comment* node) {
+    std::string cleanComment = node->getComment();
+    size_t pos = 0;
+
+    // Clean up text quotes for DOT format safety
+    while((pos = cleanComment.find('"', pos)) != std::string::npos) {
+        cleanComment.replace(pos, 1, "\\\"");
+        pos += 2;
+    }
+
+    oss << "\t" << *node << " [label=\"Comment\\n" << cleanComment << "\", fontcolor=\"#6a737d\"];\n";
+}
+
+
 void ASTRenderer::visit(Assignment* node) {
     std::string label = "Assignment\n" + node->getIdentifier().lexeme;
     if (node->getType().type != UNKNOWN) {
@@ -40,17 +54,11 @@ void ASTRenderer::visit(Assignment* node) {
 }
 
 
-void ASTRenderer::visit(Comment* node) {
-    std::string cleanComment = node->getComment();
-    size_t pos = 0;
+void ASTRenderer::visit(Discard* node) {
+    oss << "\t" << *node << " [label=\"Discard\", fontcolor=\"#d6d6d6\"];\n";
 
-    // Clean up text quotes for DOT format safety
-    while((pos = cleanComment.find('"', pos)) != std::string::npos) {
-        cleanComment.replace(pos, 1, "\\\"");
-        pos += 2;
-    }
-
-    oss << "\t" << *node << " [label=\"Comment\\n" << cleanComment << "\", fontcolor=\"#6a737d\"];\n";
+    node->getExpr()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
 }
 
 
@@ -65,6 +73,31 @@ void ASTRenderer::visit(Function* node) {
     node->getBody()->accept(this);
 
     oss << "\t" << *node << " -> " << *node->getBody() << ";\n";
+}
+
+
+void ASTRenderer::visit(FunctionCall* node) {
+    oss << "\t" << *node << " [label=\"FunctionCall\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#d2a8ff\"];\n";
+
+    for (const std::unique_ptr<Expression>& arg : node->getArguments()) {
+        arg->accept(this);
+        oss << "\t" << *node << " -> " << *arg << ";\n";
+    }
+}
+
+
+void ASTRenderer::visit(If* node) {
+    oss << "\t" << *node << " [label=\"If\", fontcolor=\"#d73a49\"];\n";
+
+    node->getCondition()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getCondition() << ";\n";
+
+    node->getThenScope()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getThenScope() << ";\n";
+
+    if (!node->getElseScope()) return;
+    node->getElseScope()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getElseScope() << ";\n";
 }
 
 

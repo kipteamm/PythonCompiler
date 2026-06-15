@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 
     auto table = std::make_unique<SymbolTable>();
 
-    Parser parser(tokens, table.get());
+    Parser parser(tokens);
     auto scope = parser.start();
     
     debugTable(*table);

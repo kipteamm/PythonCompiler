@@ -12,7 +12,8 @@ statement
     : assignment
     | COMMENT
     | function
-    | return;
+    | if_statement
+    | return;   // Parser does have a check for whether this is inside a function
 
 assignment: IDENTIFIER (':' TYPE)? ('=' expression)?;
 
@@ -32,8 +33,17 @@ composite : primary? (
                         // at least 1
 
 primary
-    : IDENTIFIER
+    : IDENTIFIER '(' arguments ')'
+    | IDENTIFIER
     | CHARACTER
     | INTEGER
     | FLOAT
     | '(' expression ')';
+
+arguments: argument (',' arguments)*;
+argument: expression;
+
+if_statement: 'if' expression ':' statement+ else_statement?
+else_statement
+    : 'else' ':' statement+
+    | 'elif' expression ':' statement+ else_statement?

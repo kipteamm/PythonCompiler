@@ -14,7 +14,7 @@ using Assertion = bool(*)(TOKENTYPE);
 // A Recursive Descent parser
 class Parser {
 public:
-    explicit Parser(const std::vector<Token>& tokens, SymbolTable* table);
+    explicit Parser(const std::vector<Token>& tokens);
 
     [[nodiscard]] std::unique_ptr<Scope> start();
 
@@ -37,15 +37,18 @@ private:
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
     [[nodiscard]] std::unique_ptr<Return> return_();
 
+    // IF STATEMENT
+    [[nodiscard]] std::unique_ptr<If> if_();
+
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
+    [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token);
     [[nodiscard]] std::unique_ptr<Expression> primary();
 
     // LITERALS
     [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;
 
     const std::vector<Token>& tokens;
-    SymbolTable* table;
 
     bool terminated = false;
     int current = 0;

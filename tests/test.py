@@ -1,2 +1,8 @@
-def test(a: int, b: float) -> float:
-    return a * b
+if 0:
+    print(0)
+
+elif 0:
+    print(1)
+
+else:
+    print(2)

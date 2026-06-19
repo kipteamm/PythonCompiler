@@ -86,8 +86,13 @@ std::unique_ptr<Statement> Parser::statement() {
         case IF:          return if_();
         case RETURN:      return return_();
 
-        default:
-            throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
+        default: {
+            auto value = primary();
+            if (value == nullptr)
+                throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
+
+            return std::make_unique<Discard>(std::move(value));
+        }
     }
 }
 
@@ -138,7 +143,7 @@ std::unique_ptr<Function> Parser::function() {
 
 
 std::unique_ptr<If> Parser::if_() {
-    advance();
+    advance(); // IF keyword
 
     auto condition = expression(std::move(primary()));
     consume(COLON, "expected ':'");
@@ -173,7 +178,7 @@ std::unique_ptr<Parameter> Parser::parameter() {
 
 
 std::unique_ptr<Return> Parser::return_() {
-    advance(); // RETUNR
+    advance(); // RETURN
 
     auto expr = expression(std::move(primary()));
 
@@ -238,14 +243,16 @@ std::unique_ptr<Expression> Parser::primary() {
         }
 
         case FALSE:
-        case TRUE:        return std::make_unique<Bool>(advance().type == TRUE);
+        case TRUE:           return std::make_unique<Bool>(advance().type == TRUE);
 
-        case CHARACTER:   return std::make_unique<Char>(advance().lexeme[0]);
-        case FRACTION:    return std::make_unique<Float>(std::stof(advance().lexeme));
-        case INTEGER:     return std::make_unique<Int>(std::stoi(advance().lexeme));
+        case CHARACTER:      return std::make_unique<Char>(advance().lexeme[0]);
+        case FRACTION:       return std::make_unique<Float>(std::stof(advance().lexeme));
+        case INTEGER:        return std::make_unique<Int>(std::stoi(advance().lexeme));
 
         case STRING:
-        case LONG_STRING: return std::make_unique<String>(std::move(advance().lexeme));
+        case LONG_STRING:    return std::make_unique<String>(std::move(advance().lexeme));
+
+        case F_STRING_START: return fString();
 
         // '(' expression ')'
         case LEFT_PAREN: {
@@ -259,3 +266,27 @@ std::unique_ptr<Expression> Parser::primary() {
         default: return nullptr;
     }
 }
+
+
+std::unique_ptr<JoinedString> Parser::fString() {
+    consume(F_STRING_START, "");
+    std::vector<std::unique_ptr<Expression>> values;
+
+    while (!match(F_STRING_END)) {
+        std::unique_ptr<Expression> value;
+        auto next = peek();
+
+        if (next.type == F_STRING_TEXT) {
+            values.push_back(std::make_unique<String>(next.lexeme));
+        } else {
+            consume(LEFT_BRACE, "");
+            values.push_back(std::move(primary()));
+            consume(RIGHT_BRACE, "");
+        }
+
+        advance();
+    }
+
+    return std::make_unique<JoinedString>(std::move(values));
+}
+

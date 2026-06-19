@@ -42,6 +42,7 @@ private:
     [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
     [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token);
     [[nodiscard]] std::unique_ptr<Expression> primary();
+    [[nodiscard]] std::unique_ptr<JoinedString> fString();
 
     const std::vector<Token>& tokens;
 

@@ -24,6 +24,9 @@ enum TOKENTYPE {
     CHARACTER, FRACTION, INTEGER, STRING, LONG_STRING,
     IDENTIFIER,
 
+    // F_FSTRINGS
+    F_STRING_START, F_STRING_TEXT, F_STRING_END,
+
     // Keywords:
     FALSE, NONE, TRUE, AS, ASSERT, ASYNC, AWAIT, BREAK, CLASS,
     CONTINUE, DEF, DEL, ELIF, ELSE, EXCEPT, FINALLY, FOR, FROM,
@@ -143,6 +146,10 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case INTEGER:        return "INTEGER";
         case FRACTION:       return "FRACTION";
         case IDENTIFIER:     return "IDENTIFIER";
+
+        case F_STRING_START: return "F_STRING_START";
+        case F_STRING_TEXT:  return "F_STRING_TEXT";
+        case F_STRING_END:   return "F_STRING_END";
 
         // Keywords
         case FALSE:          return "FALSE";

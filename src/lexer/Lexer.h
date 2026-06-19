@@ -28,7 +28,13 @@ private:
 
     void countIndents();
 
-    void addStringOrChar(char terminator);
+    // Prefixed strings & f-strings
+    [[nodiscard]] int isPrefix(char c) const;
+    void prefixedString(char prefix);
+
+    // Literals
+    [[ nodiscard ]] TOKENTYPE stringType(char terminator);
+    void addStringOrChar(TOKENTYPE type, char terminator, bool fString);
     void addNumber(TOKENTYPE type);
     void addIdentifier();
 
@@ -40,6 +46,11 @@ private:
     std::string source;
     std::vector<Token> tokens;
     std::vector<int> indentStack = {0};
+
+    // fstring
+    std::vector<int> fStringStack = {};
+    TOKENTYPE fStringType = UNKNOWN;
+    char fStringTerminator = '\0';
 
     int current = 0;
     int line = 0;

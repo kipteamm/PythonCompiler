@@ -134,4 +134,17 @@ private:
 };
 
 
+class JoinedString final : public Literal {
+public:
+    explicit JoinedString(std::vector<std::unique_ptr<Expression>> values);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getValues() { return values; }
+
+private:
+    std::vector<std::unique_ptr<Expression>> values;
+};
+
+
 #endif //PYTHONCOMPILER_EXPRESSION_H

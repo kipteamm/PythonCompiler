@@ -108,39 +108,114 @@ void Lexer::countIndents() {
 }
 
 
+int Lexer::isPrefix(const char c) const {
+    // f-string (string interpolation)
+    const bool isF = c == 'f' || c == 'F';
+    // r-string (raw strings: backslash is literal)
+    const bool isR = c == 'r' || c == 'R';
+    // b-string (byte strinsg)
+    const bool isB = c == 'b' || c == 'B';
 
-void Lexer::addStringOrChar(const char terminator) {
-    const int startCurrent = current;
+    if (!(isF || isR || isB)) return 0;
+    // Next character starts a string so this is NOT COMBINED prefixed string
+    if (peek() == '"' || peek() == '\'') return 1;
+
+    // Maybe this is a combined prefixed string
+    if (!(
+        peek() == 'f' || peek() == 'F' ||
+        peek() == 'r' || peek() == 'R' ||
+        peek() == 'b' || peek() == 'B'
+        )) return false;
+
+    if (peek() == '"' || peek() == '\'') return 2;
+
+    // Not a prefix
+    return 0;
+}
+
+
+void Lexer::prefixedString(const char prefix) {
+    switch (prefix) {
+        case 'f':
+        case 'F': {
+            fStringType = stringType(fStringTerminator);
+
+            addToken(F_STRING_START);
+            start += 1;
+            addStringOrChar(fStringType, fStringTerminator, true);
+            start = current;
+
+            return;
+        };
+
+        default:
+            throw std::runtime_error("string prefix " + std::string(prefix, 1) + " not yet supported");
+    }
+}
+
+
+TOKENTYPE Lexer::stringType(const char terminator) {
     TOKENTYPE type = terminator == '`'? CHARACTER: STRING;
 
     // Check for long strings and require certain syntax
-    if (type != CHARACTER && source.at(current + 1) == terminator) {
+    if (type != CHARACTER && peek() == terminator) {
         advance(); // Consume first extra terminator
         consume(terminator, "invalid syntax");
         type = LONG_STRING;
     }
 
+    return type;
+}
+
+
+void Lexer::addStringOrChar(const TOKENTYPE type, const char terminator, const bool fString) {
+    const int startCurrent = current;
+
     while (peek() != terminator && !atEnd()) {
         // Special condition for terminator `, which is used for characters
         // (which only consist of one unicode character...)
         if (terminator == '`' && startCurrent + 1 == current) break;
+        // In the case of an f-string, consume everything up until first '{'
+        // which starts an expression
+        if (fString && peek() == '{') break;
         advance();
     }
 
-    consume(terminator, "unterminated string literal");
+    const bool isEnd = !fString || peek() == terminator || atEnd();
+
+    if (isEnd)
+        consume(terminator, "unterminated string literal");
+    else consume('{', "lol");
 
     std::string value;
     if (type == LONG_STRING) {
-        consume(terminator, "unterminated string literal");
-        consume(terminator, "unterminated string literal");
+        if (isEnd) {
+            consume(terminator, "unterminated string literal");
+            consume(terminator, "unterminated string literal");
+        }
 
         value = source.substr(start + 3, current - start - 6);
     } else {
         value = source.substr(start + 1, current - start - 2);
     }
 
-    // Remove one to only store actual content
-    addToken(type, value);
+    if (!fString) {
+        addToken(type, value);
+        return;
+    }
+
+    if (isEnd) {
+        if (!fStringStack.empty())
+            throw std::runtime_error("invalid f-string");
+
+        addToken(F_STRING_TEXT, value);
+        addToken(F_STRING_END, "\"");
+        return;
+    }
+
+    fStringStack.push_back(1);
+    addToken(F_STRING_TEXT, value);
+    addToken(LEFT_BRACE, "{");
 }
 
 void Lexer::addNumber(TOKENTYPE type) {
@@ -196,14 +271,31 @@ void Lexer::scanSource() {
         // One character lexemes
         case '(': addToken(LEFT_PAREN); break;
         case ')': addToken(RIGHT_PAREN); break;
-        case '{': addToken(LEFT_BRACE); break;
-        case '}': addToken(RIGHT_BRACE); break;
         case '[': addToken(LEFT_BRACKET); break;
         case ']': addToken(RIGHT_BRACKET); break;
         case ':': addToken(COLON); break;
         case ',': addToken(COMMA); break;
         case '+': addToken(PLUS); break;
         case '~': addToken(INVERSE); break;
+
+        case '{': {
+            addToken(LEFT_BRACE);
+
+            // If we are not parsing f-string, this is just a token
+            if (fStringStack.empty()) break;
+            fStringStack.back()++; break;
+        };
+        case '}': {
+            addToken(RIGHT_BRACE);
+
+            // If we are not parsing f-string, this is just a token
+            if (fStringStack.empty()) break;
+            fStringStack.back()--;
+
+            if (fStringStack.back() > 0) break;
+            fStringStack.pop_back();
+            addStringOrChar(fStringType, fStringTerminator, true); break;
+        };
 
         // Dot OR Fraction floating point
         case '.':
@@ -231,7 +323,7 @@ void Lexer::scanSource() {
         case '"':
         case '\'':
         case '`':
-            addStringOrChar(c); break;
+            addStringOrChar(stringType(c), c, false); break;
 
         // Comments
         case '#':
@@ -241,6 +333,17 @@ void Lexer::scanSource() {
         default:
             if (isDigit(c))
                 addNumber(INTEGER);
+            // isPrefix returns 0, 1, or 2 depending on how many prefixes are
+            // used.
+            else if (const int prefix = isPrefix(c); prefix) {
+                if (prefix == 1) {
+                    fStringTerminator = advance();
+                    prefixedString(c);
+                    break;
+                }
+
+                throw std::runtime_error("combined prefixes don't work yet and will never because holy fucking shit (give me some time to cope)");
+            }
             else if (isAlpha(c))
                 addIdentifier();
             else

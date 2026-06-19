@@ -10,7 +10,6 @@ add_executable(PythonCompiler main.cpp
         src/ast/nodes/Node.cpp
         src/ast/nodes/Statement.cpp
         src/ast/nodes/Expression.cpp
-        src/ast/ASTVisitor.cpp
         src/ast/ASTRenderer.cpp
         src/symbol/SymbolTable.cpp
 )

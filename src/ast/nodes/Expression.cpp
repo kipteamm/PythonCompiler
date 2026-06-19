@@ -28,4 +28,6 @@ Int::Int(const int value) : value(value) {}
 
 String::String(std::string  value) : value(std::move(value)) {}
 
+JoinedString::JoinedString(std::vector<std::unique_ptr<Expression>> values)
+    : values(std::move(values)) {}
 

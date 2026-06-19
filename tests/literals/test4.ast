@@ -1,0 +1,13 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_2;
+	node_2 [label="Discard", fontcolor="#d6d6d6"];
+	node_1 [label="String(
+LONG STRING
+)", fontcolor="#005cc5"];
+	node_2 -> node_1;
+
+}

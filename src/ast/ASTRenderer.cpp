@@ -167,3 +167,13 @@ void ASTRenderer::visit(String* node) {
     oss << "\t" << *node << " [label=\"String(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
+
+void ASTRenderer::visit(JoinedString* node) {
+    oss << "\t" << *node << " [label=\"JoinedString\", fontcolor=\"#005cc5\"];\n";
+
+    for (const auto &value : node->getValues()) {
+        value->accept(this);
+        oss << "\t" << *node << " -> " << *value << ";\n";
+    }
+}
+

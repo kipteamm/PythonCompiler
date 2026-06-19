@@ -20,6 +20,7 @@ class Char;
 class Float;
 class Int;
 class String;
+class JoinedString;
 
 
 class ASTVisitor {
@@ -42,6 +43,7 @@ public:
     virtual void visit(Float* node) = 0;
     virtual void visit(Int* node) = 0;
     virtual void visit(String* node) = 0;
+    virtual void visit(JoinedString* node) = 0;
 };
 
 

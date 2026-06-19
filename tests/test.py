@@ -1,8 +1,5 @@
-if False:
-    print(2)
+"""
+LONG STRING
+"""
 
-elif False:
-    print(1)
-
-else:
-    print(0)
+print(f"test {0}")

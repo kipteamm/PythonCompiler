@@ -162,3 +162,8 @@ void ASTRenderer::visit(Int* node) {
     oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
 }
 
+
+void ASTRenderer::visit(String* node) {
+    oss << "\t" << *node << " [label=\"String(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+

@@ -21,7 +21,7 @@ enum TOKENTYPE {
     AND, OR,
 
     // Literals
-    CHARACTER, FRACTION, INTEGER, STRING,
+    CHARACTER, FRACTION, INTEGER, STRING, LONG_STRING,
     IDENTIFIER,
 
     // Keywords:
@@ -53,6 +53,10 @@ inline bool isUnaryOperation(const TOKENTYPE type) {
 
 inline bool isOperation(const TOKENTYPE type) {
     return type >= INVERSE && type <= OR;
+}
+
+inline bool isString(const TOKENTYPE type) {
+    return type == STRING || type == LONG_STRING;
 }
 
 
@@ -135,6 +139,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
 
         case CHARACTER:      return "CHARACTER";
         case STRING:         return "STRING";
+        case LONG_STRING:    return "LONG_STRING";
         case INTEGER:        return "INTEGER";
         case FRACTION:       return "FRACTION";
         case IDENTIFIER:     return "IDENTIFIER";

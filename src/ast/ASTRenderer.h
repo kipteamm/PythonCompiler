@@ -27,7 +27,8 @@ public:
     void visit(Bool *node) override;
     void visit(Char *node) override;
     void visit(Float* node) override;
-    void visit(Int *node) override;
+    void viswit(Int *node) override;
+    void visit(String *node) override;
 
 private:
     std::ostringstream oss;

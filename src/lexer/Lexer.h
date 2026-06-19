@@ -19,6 +19,7 @@ private:
     [[nodiscard]] char peek(int index) const;
     [[nodiscard]] char peek() const;
 
+    char consume(char expected, const std::string& error);
     char advance();
 
     [[nodiscard]] bool isDigit(char c) const;

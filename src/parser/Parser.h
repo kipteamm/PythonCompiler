@@ -29,24 +29,19 @@ private:
     [[nodiscard]] std::unique_ptr<Scope> scope();
 
     // STATEMENTS
-    [[nodiscard]] std::unique_ptr<Statement> statement(bool global);
+    [[nodiscard]] std::unique_ptr<Statement> statement();
 
     [[nodiscard]] std::unique_ptr<Assignment> assignment();
     [[nodiscard]] std::unique_ptr<Comment> comment();
     [[nodiscard]] std::unique_ptr<Function> function();
+    [[nodiscard]] std::unique_ptr<If> if_();
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
     [[nodiscard]] std::unique_ptr<Return> return_();
-
-    // IF STATEMENT
-    [[nodiscard]] std::unique_ptr<If> if_();
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
     [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token);
     [[nodiscard]] std::unique_ptr<Expression> primary();
-
-    // LITERALS
-    // [[nodiscard]] std::unique_ptr<Literal> literal(const Token& token) const;
 
     const std::vector<Token>& tokens;
 

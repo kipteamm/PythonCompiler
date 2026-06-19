@@ -42,7 +42,7 @@ std::unique_ptr<Scope> Parser::start() {
     auto scope = std::make_unique<Scope>();
 
     while (!match(END)) {
-        scope->addStatement(statement(true));
+        scope->addStatement(statement());
     }
 
     return scope;
@@ -55,14 +55,14 @@ std::unique_ptr<Scope> Parser::scope() {
     auto scope = std::make_unique<Scope>();
 
     while (!match(DEDENT)) {
-        scope->addStatement(statement(false));
+        scope->addStatement(statement());
     }
 
     return scope;
 }
 
 
-std::unique_ptr<Statement> Parser::statement(const bool global) {
+std::unique_ptr<Statement> Parser::statement() {
     switch (peek().type) {
         case IDENTIFIER: {
             // This could be either a standalone expression, or a variable
@@ -84,12 +84,7 @@ std::unique_ptr<Statement> Parser::statement(const bool global) {
         case DEF:         return function();
         case COMMENT:     return comment();
         case IF:          return if_();
-
-        case RETURN: {
-            if (!global) return return_();
-
-            throw std::runtime_error("return outside of function");
-        }
+        case RETURN:      return return_();
 
         default:
             throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
@@ -142,27 +137,6 @@ std::unique_ptr<Function> Parser::function() {
 }
 
 
-std::unique_ptr<Parameter> Parser::parameter() {
-    const Token& identifier = consume(IDENTIFIER, "expected parameter name");
-    consume(COLON, "expected ':' after paremeter name");
-    const Token& type = consume(isType, "expected a type for parameter");
-
-    std::unique_ptr<Expression> expr = nullptr;
-    if (match(EQUAL)) expr = expression(std::move(primary()));
-
-    return std::make_unique<Parameter>(type, identifier, std::move(expr));
-}
-
-
-std::unique_ptr<Return> Parser::return_() {
-    advance(); // RETUNR
-
-    auto expr = expression(std::move(primary()));
-
-    return std::make_unique<Return>(std::move(expr));
-}
-
-
 std::unique_ptr<If> Parser::if_() {
     advance();
 
@@ -183,6 +157,27 @@ std::unique_ptr<If> Parser::if_() {
     }
 
     return std::make_unique<If>(std::move(condition), std::move(thenScope), std::move(elseScope));
+}
+
+
+std::unique_ptr<Parameter> Parser::parameter() {
+    const Token& identifier = consume(IDENTIFIER, "expected parameter name");
+    consume(COLON, "expected ':' after paremeter name");
+    const Token& type = consume(isType, "expected a type for parameter");
+
+    std::unique_ptr<Expression> expr = nullptr;
+    if (match(EQUAL)) expr = expression(std::move(primary()));
+
+    return std::make_unique<Parameter>(type, identifier, std::move(expr));
+}
+
+
+std::unique_ptr<Return> Parser::return_() {
+    advance(); // RETUNR
+
+    auto expr = expression(std::move(primary()));
+
+    return std::make_unique<Return>(std::move(expr));
 }
 
 
@@ -230,22 +225,27 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
 std::unique_ptr<Expression> Parser::primary() {
     switch (peek().type) {
         case IDENTIFIER: {
-            // Differentiate between a variable and a function call (by checking
-            // for a following '('
+            // Identifier literals can either be a
+            //  - a function call: the token is followed by a '('
+            //  - variable identifier: the token is not followed by anuthing of
+            //    signficicance
 
             const auto identifier = advance();
-            if (!match(LEFT_PAREN))
-                return std::make_unique<Identifier>(identifier.lexeme);
+            if (match(LEFT_PAREN))
+                return functionCall(identifier);
 
-            return functionCall(identifier);
+            return std::make_unique<Identifier>(identifier.lexeme);
         }
 
         case FALSE:
-        case TRUE:       return std::make_unique<Bool>(advance().type == TRUE);
+        case TRUE:        return std::make_unique<Bool>(advance().type == TRUE);
 
-        case CHARACTER:  return std::make_unique<Char>(advance().lexeme[0]);
-        case FRACTION:   return std::make_unique<Float>(std::stof(advance().lexeme));
-        case INTEGER:    return std::make_unique<Int>(std::stoi(advance().lexeme));
+        case CHARACTER:   return std::make_unique<Char>(advance().lexeme[0]);
+        case FRACTION:    return std::make_unique<Float>(std::stof(advance().lexeme));
+        case INTEGER:     return std::make_unique<Int>(std::stoi(advance().lexeme));
+
+        case STRING:
+        case LONG_STRING: return std::make_unique<String>(std::move(advance().lexeme));
 
         // '(' expression ')'
         case LEFT_PAREN: {
@@ -259,16 +259,3 @@ std::unique_ptr<Expression> Parser::primary() {
         default: return nullptr;
     }
 }
-
-
-// std::unique_ptr<Literal> Parser::literal(const Token &token) const {
-//     switch (token.type) {
-//         case FALSE:      return std::make_unique<Bool>(false);
-//         case TRUE:       return std::make_unique<Bool>(true);
-//         case CHARACTER:  return std::make_unique<Char>(token.lexeme[0]);
-//         case FRACTION:   return std::make_unique<Float>(std::stof(token.lexeme));
-//         case INTEGER:    return std::make_unique<Int>(std::stoi(token.lexeme));
-//         default:
-//             throw std::runtime_error("Failed to parse literal, got " + tokenTypeToString(token.type) + " at " + std::to_string(current));
-//     }
-// }

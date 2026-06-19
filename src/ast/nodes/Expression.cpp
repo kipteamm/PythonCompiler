@@ -1,6 +1,7 @@
 #include "Expression.h"
 
 #include <stdexcept>
+#include <utility>
 
 
 Binary::Binary(std::unique_ptr<Expression> lhs, Token operation, std::unique_ptr<Expression> rhs)
@@ -24,4 +25,7 @@ Char::Char(const char value) : value(value) {}
 Float::Float(const float value) : value(value) {}
 
 Int::Int(const int value) : value(value) {}
+
+String::String(std::string  value) : value(std::move(value)) {}
+
 

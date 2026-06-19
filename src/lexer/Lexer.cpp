@@ -4,7 +4,15 @@
 #include <utility>
 
 
-Lexer::Lexer(std::string source) : source(std::move(source)) {}
+Lexer::Lexer(std::string source) : source(std::move(source)) {
+    size_t pos = 0;
+
+    // Some pre-lexing string tidying.
+    //      1. \r\n linebreaks become \n as per the Python spec.
+    while ((pos = this->source.find("\r\n", pos)) != std::string::npos) {
+        this->source.replace(pos, 2, "\n");
+    }
+}
 
 
 std::vector<Token> Lexer::scan() {
@@ -49,6 +57,11 @@ char Lexer::peek() const {
 
 char Lexer::advance() {
     return source.at(current++);
+}
+
+char Lexer::consume(const char expected, const std::string& error) {
+    if (peek() == expected) return advance();
+    throw std::runtime_error(error);
 }
 
 
@@ -98,6 +111,14 @@ void Lexer::countIndents() {
 
 void Lexer::addStringOrChar(const char terminator) {
     const int startCurrent = current;
+    TOKENTYPE type = terminator == '`'? CHARACTER: STRING;
+
+    // Check for long strings and require certain syntax
+    if (type != CHARACTER && source.at(current + 1) == terminator) {
+        advance(); // Consume first extra terminator
+        consume(terminator, "invalid syntax");
+        type = LONG_STRING;
+    }
 
     while (peek() != terminator && !atEnd()) {
         // Special condition for terminator `, which is used for characters
@@ -106,11 +127,20 @@ void Lexer::addStringOrChar(const char terminator) {
         advance();
     }
 
-    advance();
+    consume(terminator, "unterminated string literal");
+
+    std::string value;
+    if (type == LONG_STRING) {
+        consume(terminator, "unterminated string literal");
+        consume(terminator, "unterminated string literal");
+
+        value = source.substr(start + 3, current - start - 6);
+    } else {
+        value = source.substr(start + 1, current - start - 2);
+    }
 
     // Remove one to only store actual content
-    const std::string value = source.substr(start + 1, current - start - 2);
-    addToken(terminator == '`'? CHARACTER: STRING, value);
+    addToken(type, value);
 }
 
 void Lexer::addNumber(TOKENTYPE type) {
@@ -209,8 +239,11 @@ void Lexer::scanSource() {
             addToken(COMMENT); break;
 
         default:
-            if (isDigit(c)) addNumber(INTEGER);
-            else if (isAlpha(c)) addIdentifier();
-            else std::cerr << line << " unexpected character. '" << c << "'" << std::endl;
+            if (isDigit(c))
+                addNumber(INTEGER);
+            else if (isAlpha(c))
+                addIdentifier();
+            else
+                std::cerr << line << " unexpected character. '" << c << "'" << std::endl;
     }
 }

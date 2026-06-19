@@ -121,4 +121,17 @@ private:
 };
 
 
+class String final : public Literal {
+public:
+    explicit String(std::string value);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] std::string getValue() const { return value; }
+
+private:
+    std::string value;
+};
+
+
 #endif //PYTHONCOMPILER_EXPRESSION_H

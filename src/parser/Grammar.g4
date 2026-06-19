@@ -7,7 +7,6 @@
 start: statement* EOF;
 
 
-/* STATEMENTS */
 statement
     : assignment
     | COMMENT
@@ -34,19 +33,47 @@ composite : primary? (
                         // at least 1
 
 primary
-    : IDENTIFIER '(' arguments ')'
+    : IDENTIFIER '(' arguments ')'  // function call
     | IDENTIFIER
     | 'True'
     | 'False'
     | CHARACTER
     | INTEGER
     | FLOAT
+    | string
     | '(' expression ')';
 
 arguments: argument (',' arguments)*;
 argument: expression;
 
-if_statement: 'if' expression ':' statement+ else_statement?
+if_statement: 'if' expression ':' statement+ else_statement?;
 else_statement
     : 'else' ':' statement+
-    | 'elif' expression ':' statement+ else_statement?
+    | 'elif' expression ':' statement+ else_statement?;
+
+
+/* JUST GAWDDADN STRINGS */
+string
+    : STRING
+    | LONG_STRING
+    | F_STRING;
+
+STRING
+    : '"'  ( ~["\\\r\n] | '\\' . )* '"'
+    | '\'' ( ~['\\\r\n] | '\\' . )* '\'';
+
+LONG_STRING
+    : '"""' .*? '"""'
+    | '\'\'\'' .*? '\'\'\'';
+
+F_STRING
+    : 'f' '"'  F_STRING_COMPONENT_DOUBLE* '"'
+    | 'f' ''\' F_STRING_COMPONENT_DOUBLE* '\'';
+
+F_STRING_COMPONENT_DOUBLE
+    : ( ~["{\\\r\n] | '\\' . )+
+    | '{' expression '}';
+
+F_STRING_COMPONENT_SINGLE
+    : ( ~['{\\\r\n] | '\\' . )+
+    | '{' expression '}';

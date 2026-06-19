@@ -19,6 +19,7 @@ class Bool;
 class Char;
 class Float;
 class Int;
+class String;
 
 
 class ASTVisitor {
@@ -40,6 +41,7 @@ public:
     virtual void visit(Char* node) = 0;
     virtual void visit(Float* node) = 0;
     virtual void visit(Int* node) = 0;
+    virtual void visit(String* node) = 0;
 };
 
 

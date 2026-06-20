@@ -1,0 +1,48 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_2;
+	node_2 [label="Assignment
+i: int", fontcolor="#d73a49"];
+	node_2 -> node_1;
+	node_1 [label="Int(0)", fontcolor="#005cc5"];
+	node_0 -> node_16;
+	node_16 [label="While", fontcolor="#d73a49"];
+	node_3 [label="Bool(1)", fontcolor="#005cc5"];
+	node_16 -> node_3;
+	node_4[label="Scope"];
+	node_4 -> node_8;
+	node_8 [label="Assignment
+i", fontcolor="#d73a49"];
+	node_8 -> node_7;
+	node_7 [label="Binary(+)", fontcolor="#d73a49"];
+	node_6 [label="ID(i)"];
+	node_7 -> node_6;
+	node_5 [label="Int(1)", fontcolor="#005cc5"];
+	node_7 -> node_5;
+	node_4 -> node_14;
+	node_14 [label="If", fontcolor="#d73a49"];
+	node_11 [label="Binary(<)", fontcolor="#d73a49"];
+	node_9 [label="ID(i)"];
+	node_11 -> node_9;
+	node_10 [label="Int(10)", fontcolor="#005cc5"];
+	node_11 -> node_10;
+	node_14 -> node_11;
+	node_12[label="Scope"];
+	node_12 -> node_13;
+	node_13 [label="Continue", fontcolor="#d73a49"];
+	node_14 -> node_12;
+	node_4 -> node_15;
+	node_15 [label="Break", fontcolor="#d73a49"];
+	node_16 -> node_4;
+	node_0 -> node_19;
+	node_19 [label="Discard", fontcolor="#d6d6d6"];
+	node_18 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_17 [label="ID(i)"];
+	node_18 -> node_17;
+	node_19 -> node_18;
+
+}

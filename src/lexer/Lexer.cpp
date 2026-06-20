@@ -82,10 +82,11 @@ char Lexer::consume(const char expected, const std::string& error) {
 
 void Lexer::countIndents() {
     int indent = 0;
-
     while (peek() == ' ' || peek() == '\t') {
         indent += advance() == '\t'? 4: 1;
     }
+
+    if (peek() == '\n' || peek() == '#' || atEnd()) return;
 
     const int top = indentStack.back();
 

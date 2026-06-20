@@ -39,6 +39,7 @@ private:
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
     [[nodiscard]] std::unique_ptr<Return> return_();
     [[nodiscard]] std::unique_ptr<While> while_();
+    [[nodiscard]] std::unique_ptr<ForEach> for_();
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression();

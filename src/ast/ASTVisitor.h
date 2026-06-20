@@ -6,6 +6,8 @@ class Node;
 class Scope;
 class Comment;
 class Assignment;
+class Break;
+class Continue;
 class Discard;
 class ForEach;
 class Function;
@@ -31,6 +33,8 @@ public:
     virtual void visit(Scope* node) = 0;
     virtual void visit(Comment* node) = 0;
     virtual void visit(Assignment* node) = 0;
+    virtual void visit(Break* node) = 0;
+    virtual void visit(Continue* node) = 0;
     virtual void visit(Discard* node) = 0;
     virtual void visit(ForEach* node) = 0;
     virtual void visit(Function* node) = 0;

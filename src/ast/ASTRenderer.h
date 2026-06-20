@@ -15,6 +15,8 @@ public:
     void visit(Scope *node) override;
     void visit(Comment *node) override;
     void visit(Assignment *node) override;
+    void visit(Break *node) override;
+    void visit(Continue *node) override;
     void visit(Discard *node) override;
     void visit(ForEach* node) override;
     void visit(Function *node) override;

@@ -1,0 +1,32 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_11;
+	node_11 [label="For (i)", fontcolor="#d73a49"];
+	node_2 [label="FunctionCall
+range", fontcolor="#d2a8ff"];
+	node_1 [label="Int(10)", fontcolor="#005cc5"];
+	node_2 -> node_1;
+	node_11 -> node_2;
+	node_3[label="Scope"];
+	node_3 -> node_6;
+	node_6 [label="Discard", fontcolor="#d6d6d6"];
+	node_5 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_4 [label="ID(i)"];
+	node_5 -> node_4;
+	node_6 -> node_5;
+	node_11 -> node_3;
+	node_7[label="Scope"];
+	node_7 -> node_10;
+	node_10 [label="Discard", fontcolor="#d6d6d6"];
+	node_9 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_8 [label="String(done)", fontcolor="#005cc5"];
+	node_9 -> node_8;
+	node_10 -> node_9;
+	node_11 -> node_7;
+
+}

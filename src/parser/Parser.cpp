@@ -94,6 +94,12 @@ std::unique_ptr<Statement> Parser::statement() {
         case IF:          return if_();
         case RETURN:      return return_();
         case WHILE:       return while_();
+        case FOR:         return for_();
+
+        case BREAK:
+            advance(); return std::make_unique<Break>();
+        case CONTINUE:
+            advance(); return std::make_unique<Continue>();
 
         default: {
             // Anything that doesn't match the specific cases here is assumed
@@ -234,12 +240,35 @@ std::unique_ptr<While> Parser::while_() {
     // executed after a full and successful iteration (no errors)
     std::unique_ptr<Scope> elseScope = nullptr;
     if (match(ELSE)) {
+        consume(COLON, "expected ':'");
         elseScope = scope();
     }
 
     return std::make_unique<While>(std::move(condition), std::move(bodyScope), std::move(elseScope));
 }
 
+
+std::unique_ptr<ForEach> Parser::for_() {
+    advance(); // FOR
+
+    const Token identifier = consume(IDENTIFIER, "missing for identifier");
+    consume(IN, "expected 'in' keyword");
+
+    auto iterable = expression();
+    consume(COLON, "expected ':'");
+
+    auto bodyScope = scope();
+
+    // Python loops can be chained with an else statement which will be
+    // executed after a full and successful iteration (no errors)
+    std::unique_ptr<Scope> elseScope = nullptr;
+    if (match(ELSE)) {
+        consume(COLON, "expected ':'");
+        elseScope = scope();
+    }
+
+    return std::make_unique<ForEach>(identifier, std::move(iterable), std::move(bodyScope), std::move(elseScope));
+}
 
 
 std::unique_ptr<Expression> Parser::expression() {

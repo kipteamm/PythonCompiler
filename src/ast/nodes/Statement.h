@@ -58,6 +58,22 @@ private:
 };
 
 
+class Break final : public Statement {
+public:
+    Break() = default;
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+};
+
+
+class Continue final : public Statement {
+public:
+    Continue() = default;
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+};
+
+
 class Discard final : public Statement {
 public:
     explicit Discard(std::unique_ptr<Expression> expr);

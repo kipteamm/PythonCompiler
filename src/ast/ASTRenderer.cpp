@@ -54,6 +54,17 @@ void ASTRenderer::visit(Assignment* node) {
 }
 
 
+void ASTRenderer::visit(Break* node) {
+    oss << "\t" << *node << " [label=\"Break\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+void ASTRenderer::visit(Continue* node) {
+    oss << "\t" << *node << " [label=\"Continue\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+
 void ASTRenderer::visit(Discard* node) {
     oss << "\t" << *node << " [label=\"Discard\", fontcolor=\"#d6d6d6\"];\n";
 

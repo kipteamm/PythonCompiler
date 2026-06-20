@@ -62,6 +62,23 @@ void ASTRenderer::visit(Discard* node) {
 }
 
 
+void ASTRenderer::visit(ForEach* node) {
+    oss << "\t" << *node << " [label=\"For (" << node->getIdentifier().lexeme << ")\", fontcolor=\"#d73a49\"];\n";
+
+    node->getIterable()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getIterable() << ";\n";
+
+    node->getBodyScope()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getBodyScope() << ";\n";
+
+    if (node->getElseScope() == nullptr) return;
+
+    node->getElseScope()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getElseScope() << ";\n";
+}
+
+
+
 void ASTRenderer::visit(Function* node) {
     oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
@@ -117,6 +134,22 @@ void ASTRenderer::visit(Return* node) {
     node->getExpr()->accept(this);
 
     oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
+}
+
+
+void ASTRenderer::visit(While* node) {
+    oss << "\t" << *node << " [label=\"While\", fontcolor=\"#d73a49\"];\n";
+
+    node->getCondition()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getCondition() << ";\n";
+
+    node->getBodyScope()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getBodyScope() << ";\n";
+
+    if (node->getElseScope() == nullptr) return;
+
+    node->getElseScope()->accept(this);
+    oss << "\t" << *node << " -> " << * node->getElseScope() << ";\n";
 }
 
 

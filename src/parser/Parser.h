@@ -21,6 +21,7 @@ public:
 private:
     [[nodiscard]] Token peek() const;
     [[nodiscard]] bool match(TOKENTYPE token);
+    [[nodiscard]] bool match(Assertion isToken);
 
     Token consume(Assertion assertion, const std::string& error);
     Token consume(TOKENTYPE type, const std::string& error);
@@ -37,9 +38,11 @@ private:
     [[nodiscard]] std::unique_ptr<If> if_();
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
     [[nodiscard]] std::unique_ptr<Return> return_();
+    [[nodiscard]] std::unique_ptr<While> while_();
 
     // EXPRESSIONS
-    [[nodiscard]] std::unique_ptr<Expression> expression(std::unique_ptr<Expression> lhs);
+    [[nodiscard]] std::unique_ptr<Expression> expression();
+    [[nodiscard]] std::unique_ptr<Expression> expression_(std::unique_ptr<Expression> lhs);
     [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token);
     [[nodiscard]] std::unique_ptr<Expression> primary();
     [[nodiscard]] std::unique_ptr<JoinedString> fString();

@@ -4,6 +4,21 @@
 #include <utility>
 
 
+inline bool isDigit(const char c) {
+    return '0' <= c && c <= '9';
+}
+
+inline bool isAlpha(const char c) {
+    return  ('a' <= c && c <= 'z') ||
+            ('A' <= c && c <= 'Z') ||
+            (c == '_');
+}
+
+inline bool isAlphaNumeric(const char c) {
+    return isDigit(c) || isAlpha(c);
+}
+
+
 Lexer::Lexer(std::string source) : source(std::move(source)) {
     size_t pos = 0;
 
@@ -62,21 +77,6 @@ char Lexer::advance() {
 char Lexer::consume(const char expected, const std::string& error) {
     if (peek() == expected) return advance();
     throw std::runtime_error(error);
-}
-
-
-bool Lexer::isDigit(const char c) const {
-    return '0' <= c && c <= '9';
-}
-
-bool Lexer::isAlpha(const char c) const {
-    return  ('a' <= c && c <= 'z') ||
-            ('A' <= c && c <= 'Z') ||
-            (c == '_');
-}
-
-bool Lexer::isAlphaNumeric(char c) const {
-    return isDigit(c) || isAlpha(c);
 }
 
 
@@ -146,7 +146,7 @@ void Lexer::prefixedString(const char prefix) {
             start = current;
 
             return;
-        };
+        }
 
         default:
             throw std::runtime_error("string prefix " + std::string(prefix, 1) + " not yet supported");
@@ -275,7 +275,6 @@ void Lexer::scanSource() {
         case ']': addToken(RIGHT_BRACKET); break;
         case ':': addToken(COLON); break;
         case ',': addToken(COMMA); break;
-        case '+': addToken(PLUS); break;
         case '~': addToken(INVERSE); break;
 
         case '{': {
@@ -284,7 +283,7 @@ void Lexer::scanSource() {
             // If we are not parsing f-string, this is just a token
             if (fStringStack.empty()) break;
             fStringStack.back()++; break;
-        };
+        }
         case '}': {
             addToken(RIGHT_BRACE);
 
@@ -295,7 +294,7 @@ void Lexer::scanSource() {
             if (fStringStack.back() > 0) break;
             fStringStack.pop_back();
             addStringOrChar(fStringType, fStringTerminator, true); break;
-        };
+        }
 
         // Dot OR Fraction floating point
         case '.':
@@ -313,11 +312,15 @@ void Lexer::scanSource() {
         case '>':
             addToken(match('=')? GREATER_EQUAL: match('>')? RIGHT_SHIFT: GREATER); break;
         case '-':
-            addToken(match('>')? ARROW: MINUS); break;
+            addToken(match('>')? ARROW: match('=')? MINUS_EQUAL: MINUS); break;
+        case '+':
+            addToken(match('=')? PLUS_EQUAL: PLUS); break;
         case '*':
-            addToken(match('*')? EXPONENT: STAR); break;
+            addToken(match('*')? match('=')? EXPONENT_EQUAL: EXPONENT: match('=')? STAR_EQUAL: STAR); break;
         case '/':
-            addToken(match('/')? FLOOR: SLASH); break;
+            addToken(match('/')? match('/')? FLOOR_EQUAL: FLOOR: match('=')? SLASH_EQUAL: SLASH); break;
+        case '%':
+            addToken(match('=')? MODULO_EQUAL: MODULO); break;
 
         // String literals
         case '"':

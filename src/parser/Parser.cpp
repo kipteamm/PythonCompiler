@@ -18,6 +18,14 @@ bool Parser::match(const TOKENTYPE token) {
     return true;
 }
 
+bool Parser::match(const Assertion isToken) {
+    if (current >= tokens.size()) throw std::runtime_error("expected token not found");
+    if (!isToken(peek().type)) return false;
+
+    advance();
+    return true;
+}
+
 
 Token Parser::consume(const Assertion assertion, const std::string& error) {
     if (assertion(peek().type)) return advance();
@@ -68,7 +76,7 @@ std::unique_ptr<Statement> Parser::statement() {
             // This could be either a standalone expression, or a variable
             // assignment/declaration. Depends on what follows, eg;
 
-            if (tokens.at(current + 1).type == EQUAL || tokens.at(current + 1).type == COLON) {
+            if (isAssignment(tokens.at(current + 1).type) || tokens.at(current + 1).type == COLON) {
                 // Both declarations and assignments are rather ambigious in Python, so
                 // we assume everything is an assignment. This is later properly
                 // handled to assure that the first assignment is also a declaration.
@@ -77,7 +85,7 @@ std::unique_ptr<Statement> Parser::statement() {
 
             // Global expressions are technically discarded expressions, tho
             // FunctionCalls do still have effect on the program
-            auto expr = expression(std::move(primary()));
+            auto expr = expression();
             return std::make_unique<Discard>(std::move(expr));
         }
 
@@ -85,14 +93,27 @@ std::unique_ptr<Statement> Parser::statement() {
         case COMMENT:     return comment();
         case IF:          return if_();
         case RETURN:      return return_();
+        case WHILE:       return while_();
 
         default: {
-            auto value = primary();
-            if (value == nullptr)
-                throw std::runtime_error("Failed to parse statement, got " + tokenTypeToString(peek().type) + " at " + std::to_string(current));
-
+            // Anything that doesn't match the specific cases here is assumed
+            // to be part of an expression.
+            auto value = expression();
             return std::make_unique<Discard>(std::move(value));
         }
+    }
+}
+
+
+std::pair<TOKENTYPE, std::string> getBaseOperator(const TOKENTYPE compoundAssignment) {
+    switch (compoundAssignment) {
+        case PLUS_EQUAL:   return {PLUS, "+"};
+        case MINUS_EQUAL:  return {MINUS, "-"};
+        case MODULO_EQUAL: return {MODULO, "%"};
+        case STAR_EQUAL:   return {STAR, "*"};
+        case SLASH_EQUAL:  return {SLASH, "/"};
+        default:
+            throw std::runtime_error("unknown compound operator " + tokenTypeToString(compoundAssignment));
     }
 }
 
@@ -104,7 +125,22 @@ std::unique_ptr<Assignment> Parser::assignment() {
         : Token(UNKNOWN, "UNKNOWN");
 
     std::unique_ptr<Expression> expr = nullptr;
-    if (match(EQUAL)) expr = expression(std::move(primary()));
+    TOKENTYPE assignmentType = UNKNOWN;
+
+    if (isAssignment(peek().type)) {
+        assignmentType = advance().type;
+        expr = expression();
+    }
+
+    // Compound assignment
+    if (assignmentType != EQUAL) {
+        const auto [token, lexeme] = getBaseOperator(assignmentType);
+        expr = std::make_unique<Binary>(
+            std::make_unique<Identifier>(identifier.lexeme),
+            Token{token, lexeme},
+            std::move(expr)
+        );
+    }
 
     return std::make_unique<Assignment>(identifier, type, std::move(expr));
 }
@@ -145,7 +181,7 @@ std::unique_ptr<Function> Parser::function() {
 std::unique_ptr<If> Parser::if_() {
     advance(); // IF keyword
 
-    auto condition = expression(std::move(primary()));
+    auto condition = expression();
     consume(COLON, "expected ':'");
 
     auto thenScope = scope();
@@ -171,7 +207,7 @@ std::unique_ptr<Parameter> Parser::parameter() {
     const Token& type = consume(isType, "expected a type for parameter");
 
     std::unique_ptr<Expression> expr = nullptr;
-    if (match(EQUAL)) expr = expression(std::move(primary()));
+    if (match(EQUAL)) expr = expression();
 
     return std::make_unique<Parameter>(type, identifier, std::move(expr));
 }
@@ -180,13 +216,38 @@ std::unique_ptr<Parameter> Parser::parameter() {
 std::unique_ptr<Return> Parser::return_() {
     advance(); // RETURN
 
-    auto expr = expression(std::move(primary()));
+    auto expr = expression();
 
     return std::make_unique<Return>(std::move(expr));
 }
 
 
-std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) {
+std::unique_ptr<While> Parser::while_() {
+    advance(); // WHILE
+
+    auto condition = expression();
+    consume(COLON, "expected ':'");
+
+    auto bodyScope = scope();
+
+    // Python loops can be chained with an else statement which will be
+    // executed after a full and successful iteration (no errors)
+    std::unique_ptr<Scope> elseScope = nullptr;
+    if (match(ELSE)) {
+        elseScope = scope();
+    }
+
+    return std::make_unique<While>(std::move(condition), std::move(bodyScope), std::move(elseScope));
+}
+
+
+
+std::unique_ptr<Expression> Parser::expression() {
+    return std::move(expression_(std::move(primary())));
+}
+
+
+std::unique_ptr<Expression> Parser::expression_(std::unique_ptr<Expression> lhs) {
     // Just primaries no operations
     if (!isOperation(peek().type) && lhs != nullptr) return lhs;
 
@@ -202,13 +263,13 @@ std::unique_ptr<Expression> Parser::expression(std::unique_ptr<Expression> lhs) 
     } else if (rhs == nullptr) {
         throw std::runtime_error("invalid syntax");
     } else {
-        if (operation.type == INVERSE)
-            throw std::runtime_error("inverse requires unary expression");
+        if (isOnlyUnaryOperation(operation.type))
+            throw std::runtime_error("unary operation expressed as binary operation");
 
         expr = std::make_unique<Binary>(std::move(lhs), std::move(operation), std::move(rhs));
     }
 
-    return expression(std::move(expr));
+    return expression_(std::move(expr));
 }
 
 
@@ -216,7 +277,7 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
     std::vector<std::unique_ptr<Expression>> arguments;
 
     while (!match(RIGHT_PAREN)) {
-        arguments.push_back(expression(std::move(primary())));
+        arguments.push_back(expression());
 
         if (peek().type == RIGHT_PAREN) continue;
         consume(COMMA, "Expected next argument");
@@ -224,7 +285,6 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
 
     return std::make_unique<FunctionCall>(token, std::move(arguments));
 }
-
 
 
 std::unique_ptr<Expression> Parser::primary() {
@@ -257,7 +317,7 @@ std::unique_ptr<Expression> Parser::primary() {
         // '(' expression ')'
         case LEFT_PAREN: {
             advance(); // (
-            auto expr = expression(std::move(primary()));
+            auto expr = expression();
             consume(RIGHT_PAREN, "missing closing bracket");
 
             return expr;
@@ -289,4 +349,3 @@ std::unique_ptr<JoinedString> Parser::fString() {
 
     return std::make_unique<JoinedString>(std::move(values));
 }
-

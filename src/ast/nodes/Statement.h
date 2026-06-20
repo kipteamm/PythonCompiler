@@ -71,6 +71,25 @@ private:
 };
 
 
+class ForEach final : public Statement {
+public:
+    explicit ForEach(Token identifier, std::unique_ptr<Expression> iterable, std::unique_ptr<Scope> bodyScope, std::unique_ptr<Scope> elseScope);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] Expression* getIterable() const { return iterable.get(); }
+    [[nodiscard]] Scope* getBodyScope() const { return bodyScope.get(); }
+    [[nodiscard]] Scope* getElseScope() const { return elseScope.get(); }
+
+private:
+    Token identifier;
+    std::unique_ptr<Expression> iterable;
+    std::unique_ptr<Scope> bodyScope;
+    std::unique_ptr<Scope> elseScope;
+};
+
+
 class Function final : public Statement {
 public:
     explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
@@ -117,6 +136,23 @@ public:
 
 private:
     std::unique_ptr<Expression> expr;
+};
+
+
+class While final : public Statement {
+public:
+    explicit While(std::unique_ptr<Expression> condition, std::unique_ptr<Scope> bodyScope, std::unique_ptr<Scope> elseScope);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Expression* getCondition() const { return condition.get(); }
+    [[nodiscard]] Scope* getBodyScope() const { return bodyScope.get(); }
+    [[nodiscard]] Scope* getElseScope() const { return elseScope.get(); }
+
+private:
+    std::unique_ptr<Expression> condition;
+    std::unique_ptr<Scope> bodyScope;
+    std::unique_ptr<Scope> elseScope;
 };
 
 #endif //PYTHONCOMPILER_STATEMENT_H

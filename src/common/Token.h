@@ -16,8 +16,10 @@ enum TOKENTYPE {
     // Both
     MINUS, PLUS, STAR, EXPONENT,
     // Binary
-    SLASH, LEFT_SHIFT, RIGHT_SHIFT, FLOOR,
-    BANG_EQUAL, BANG, EQUAL_EQUAL, EQUAL, LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
+    SLASH, LEFT_SHIFT, RIGHT_SHIFT, FLOOR, MODULO,
+    PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, MODULO_EQUAL,
+    EXPONENT_EQUAL, FLOOR_EQUAL, EQUAL, BANG_EQUAL, BANG, EQUAL_EQUAL,
+    LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
     AND, OR,
 
     // Literals
@@ -50,12 +52,20 @@ inline bool isType(const TOKENTYPE type) {
     return type >= CHAR && type <= STR;
 }
 
+inline bool isOnlyUnaryOperation(const TOKENTYPE type) {
+    return type == INVERSE;
+}
+
 inline bool isUnaryOperation(const TOKENTYPE type) {
     return type >= INVERSE && type <= PLUS;
 }
 
 inline bool isOperation(const TOKENTYPE type) {
     return type >= INVERSE && type <= OR;
+}
+
+inline bool isAssignment(const TOKENTYPE type) {
+    return type >= PLUS_EQUAL && type <= EQUAL;
 }
 
 inline bool isString(const TOKENTYPE type) {
@@ -139,6 +149,8 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case GREATER:        return "GREATER";
         case LEFT_SHIFT:     return "LEFT_SHIFT";
         case RIGHT_SHIFT:    return "RIGHT_SHIFT";
+        case PLUS_EQUAL:     return "PLUS_EQUAL";
+        case MINUS_EQUAL:    return "MINUS_EQUAL";
 
         case CHARACTER:      return "CHARACTER";
         case STRING:         return "STRING";

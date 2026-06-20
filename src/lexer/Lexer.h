@@ -22,10 +22,6 @@ private:
     char consume(char expected, const std::string& error);
     char advance();
 
-    [[nodiscard]] bool isDigit(char c) const;
-    [[nodiscard]] bool isAlpha(char c) const;
-    [[nodiscard]] bool isAlphaNumeric(char c) const;
-
     void countIndents();
 
     // Prefixed strings & f-strings

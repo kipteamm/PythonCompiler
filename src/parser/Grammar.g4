@@ -12,9 +12,11 @@ statement
     | COMMENT
     | function
     | if_statement
+    | while
     | return;   // Parser does have a check for whether this is inside a function
 
-assignment: IDENTIFIER (':' TYPE)? ('=' expression)?;
+assignment: IDENTIFIER (':' TYPE)? (('=' expression)? | compound_assignment expression);
+compound_assignment: '+=' | '-=' | '/=' | '*=' | '**=' | '//=' | '%='
 
 function: 'def' IDENTIFIER '(' parameters ')' '->' TYPE ':' statement*;
 parameters: parameter (',' parameter)*;
@@ -51,29 +53,15 @@ else_statement
     : 'else' ':' statement+
     | 'elif' expression ':' statement+ else_statement?;
 
+while: 'while' expression ':' statement+ loop_else?
+loop_else: 'else' ':' statement+
 
 /* JUST GAWDDADN STRINGS */
 string
     : STRING
     | LONG_STRING
-    | F_STRING;
+    | string_prefix string_prefix? (STRING | LONG_STRING);
+    // you can combine string prefixes, tho combinations like ff should not
+    // (and don't) work
 
-STRING
-    : '"'  ( ~["\\\r\n] | '\\' . )* '"'
-    | '\'' ( ~['\\\r\n] | '\\' . )* '\'';
-
-LONG_STRING
-    : '"""' .*? '"""'
-    | '\'\'\'' .*? '\'\'\'';
-
-F_STRING
-    : 'f' '"'  F_STRING_COMPONENT_DOUBLE* '"'
-    | 'f' ''\' F_STRING_COMPONENT_DOUBLE* '\'';
-
-F_STRING_COMPONENT_DOUBLE
-    : ( ~["{\\\r\n] | '\\' . )+
-    | '{' expression '}';
-
-F_STRING_COMPONENT_SINGLE
-    : ( ~['{\\\r\n] | '\\' . )+
-    | '{' expression '}';
+string_prefix: ('f'|'F'|'b'|'B'|'r'|'R');

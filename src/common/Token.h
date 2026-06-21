@@ -20,7 +20,7 @@ enum TOKENTYPE {
     PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, MODULO_EQUAL,
     EXPONENT_EQUAL, FLOOR_EQUAL, EQUAL, BANG_EQUAL, BANG, EQUAL_EQUAL,
     LESS_EQUAL, LESS, GREATER_EQUAL, GREATER,
-    AND, OR,
+    AND, OR, PIPE,
 
     // Literals
     CHARACTER, FRACTION, INTEGER, STRING, LONG_STRING,
@@ -35,9 +35,6 @@ enum TOKENTYPE {
     GLOBAL, IF, IMPORT, IN, IS, LAMBDA, NONLOCAL, NOT, PASS,
     RAISE, RETURN, TRY, WHILE, WITH, YIELD,
 
-    // TYPES
-    CHAR, DICT, FLOAT, INT, LIST, STR,
-
     COMMENT,
     UNKNOWN,
     END // End Of File (EOF is reserved)
@@ -46,10 +43,6 @@ enum TOKENTYPE {
 
 inline bool isLiteral(const TOKENTYPE type) {
     return type >= CHARACTER && type <= STRING;
-}
-
-inline bool isType(const TOKENTYPE type) {
-    return type >= CHAR && type <= STR;
 }
 
 inline bool isOnlyUnaryOperation(const TOKENTYPE type) {
@@ -83,7 +76,6 @@ static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"async",    ASYNC},
     {"await",    AWAIT},
     {"break",    BREAK},
-    {"char",     CHAR},
     {"class",    CLASS},
     {"continue", CONTINUE},
     {"def",      DEF},
@@ -92,14 +84,12 @@ static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"else",     ELSE},
     {"except",   EXCEPT},
     {"finally",  FINALLY},
-    {"float",    FLOAT},
     {"for",      FOR},
     {"from",     FROM},
     {"global",   GLOBAL},
     {"if",       IF},
     {"import",   IMPORT},
     {"in",       IN},
-    {"int",      INT},
     {"is",       IS},
     {"lambda",   LAMBDA},
     {"nonlocal", NONLOCAL},
@@ -135,10 +125,11 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case INVERSE:        return "INVERSE";
         case MINUS:          return "MINUS";
         case PLUS:           return "PLUS";
-
         case STAR:           return "STAR";
         case EXPONENT:       return "EXPONENT";
         case SLASH:          return "SLASH";
+        case PIPE:           return "PIPE";
+
         case BANG_EQUAL:     return "BANG_EQUAL";
         case BANG:           return "BANG";
         case EQUAL_EQUAL:    return "EQUAL_EQUAL";
@@ -173,7 +164,6 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case ASYNC:          return "ASYNC";
         case AWAIT:          return "AWAIT";
         case BREAK:          return "BREAK";
-        case CHAR:           return "CHAR";
         case CLASS:          return "CLASS";
         case CONTINUE:       return "CONTINUE";
         case DEF:            return "DEF";
@@ -182,14 +172,12 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case ELSE:           return "ELSE";
         case EXCEPT:         return "EXCEPT";
         case FINALLY:        return "FINALLY";
-        case FLOAT:        return "FLOAT";
         case FOR:            return "FOR";
         case FROM:           return "FROM";
         case GLOBAL:         return "GLOBAL";
         case IF:             return "IF";
         case IMPORT:         return "IMPORT";
         case IN:             return "IN";
-        case INT:            return "INT";
         case IS:             return "IS";
         case LAMBDA:         return "LAMBDA";
         case NONLOCAL:       return "NONLOCAL";

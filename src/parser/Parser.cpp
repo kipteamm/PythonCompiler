@@ -125,9 +125,9 @@ std::pair<TOKENTYPE, std::string> getBaseOperator(const TOKENTYPE compoundAssign
 
 std::unique_ptr<Assignment> Parser::assignment() {
     const Token identifier = consume(IDENTIFIER, "expected identifier");
-    const Token type = match(COLON)
-        ? consume(isType, "expected type")
-        : Token(UNKNOWN, "UNKNOWN");
+    std::unique_ptr<Type> type = match(COLON)
+        ? this->type()
+        : nullptr;
 
     std::unique_ptr<Expression> expr = nullptr;
     TOKENTYPE assignmentType = UNKNOWN;
@@ -147,14 +147,8 @@ std::unique_ptr<Assignment> Parser::assignment() {
         );
     }
 
-    return std::make_unique<Assignment>(identifier, type, std::move(expr));
+    return std::make_unique<Assignment>(identifier, std::move(type), std::move(expr));
 }
-
-
-// std::unique_ptr<Comment> Parser::comment() {
-//     const Token& comment = consume(COMMENT, "expected comment");
-//     return std::make_unique<Comment>(comment.lexeme);
-// }
 
 
 std::unique_ptr<Function> Parser::function() {
@@ -173,13 +167,13 @@ std::unique_ptr<Function> Parser::function() {
     }
 
     consume(ARROW, "expected '->' return type specifier");
-    const Token& returnType = consume(isType, "expected valid return type");
+    std::unique_ptr<Type> returnType = type();
 
     consume(COLON, "expected ':' after function signature");
 
     auto scope = this->scope();
 
-    return std::make_unique<Function>(identifier, returnType, std::move(parameters), std::move(scope));
+    return std::make_unique<Function>(identifier, std::move(returnType), std::move(parameters), std::move(scope));
 }
 
 
@@ -209,12 +203,12 @@ std::unique_ptr<If> Parser::if_() {
 std::unique_ptr<Parameter> Parser::parameter() {
     const Token& identifier = consume(IDENTIFIER, "expected parameter name");
     consume(COLON, "expected ':' after paremeter name");
-    const Token& type = consume(isType, "expected a type for parameter");
+    std::unique_ptr<Type> type = this->type();
 
     std::unique_ptr<Expression> expr = nullptr;
     if (match(EQUAL)) expr = expression();
 
-    return std::make_unique<Parameter>(type, identifier, std::move(expr));
+    return std::make_unique<Parameter>(identifier, std::move(type), std::move(expr));
 }
 
 
@@ -267,6 +261,61 @@ std::unique_ptr<ForEach> Parser::for_() {
     }
 
     return std::make_unique<ForEach>(identifier, std::move(iterable), std::move(bodyScope), std::move(elseScope));
+}
+
+
+std::unique_ptr<Type> Parser::type() {
+    std::vector<std::unique_ptr<Type>> types;
+    types.push_back(singleType());
+
+    // Consume singleTypes for as long as this is a valid union
+    while (match(PIPE)) {
+        types.push_back(singleType());
+    }
+
+    // If it wasn't an union return initial type only
+    if (types.size() == 1)
+        return std::move(types[0]);
+
+    return std::make_unique<UnionType>(std::move(types));
+}
+
+std::unique_ptr<Type> Parser::singleType() {
+    Token baseToken = peek();
+    std::unique_ptr<Type> baseType;
+
+    switch (baseToken.type) {
+        case NONE:
+            baseType = std::make_unique<PrimitiveType>(baseToken);
+            advance(); // consume the type
+            break;
+
+        case IDENTIFIER:
+            baseType = std::make_unique<UnresolvedType>(baseToken);
+            advance(); // consume the type
+            break;
+
+        default:
+            throw std::runtime_error("unexpected type " + baseToken.lexeme);
+    }
+
+    // Check whether this is a Generic type, if not return early
+    if (!match(LEFT_BRACKET))
+        return baseType;
+
+    // Generic without arguments
+    if (match(RIGHT_BRACKET))
+        return std::make_unique<GenericType>(baseToken);
+
+    std::vector<std::unique_ptr<Type>> arguments;
+    arguments.push_back(type());
+
+    while (match(COMMA)) {
+        arguments.push_back(type());
+    }
+    consume(RIGHT_BRACKET, "expected ']' after generic type arguments");
+
+    return std::make_unique<GenericType>(baseToken, std::move(arguments));
 }
 
 

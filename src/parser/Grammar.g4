@@ -16,12 +16,16 @@ statement
     | while
     | return;   // Parser does have a check for whether this is inside a function
 
-assignment: IDENTIFIER (':' TYPE)? (('=' expression)? | compound_assignment expression);
+type_params: '[' type_param (',' type_param)* ']';
+type_param: IDENTIFIER (':' types)?;
+types: TYPE (type_params)? ('|' types)*;
+
+assignment: IDENTIFIER (':' types)? (('=' expression)? | compound_assignment expression);
 compound_assignment: '+=' | '-=' | '/=' | '*=' | '**=' | '//=' | '%='
 
-function: 'def' IDENTIFIER '(' parameters ')' '->' TYPE ':' statement*;
+function: 'def' IDENTIFIER '(' parameters ')' '->' types ':' statement*;
 parameters: parameter (',' parameter)*;
-parameter: IDENTIFIER ':' TYPE ('=' expression);
+parameter: IDENTIFIER ':' types ('=' expression);
 
 expression
     : primary

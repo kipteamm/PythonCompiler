@@ -4,10 +4,9 @@ digraph AST {
 	node [shape=box, fontname="Courier"];
 	node_0[label="Scope"];
 	node_0 -> node_2;
-	node_2 [label="Assignment
-num", fontcolor="#d73a49"];
-	node_2 -> node_1;
+	node_2 [label="Assignment num", fontcolor="#d73a49"];
 	node_1 [label="Int(0)", fontcolor="#005cc5"];
+	node_2 -> node_1;
 	node_0 -> node_14;
 	node_14 [label="While", fontcolor="#d73a49"];
 	node_3 [label="Bool(1)", fontcolor="#005cc5"];
@@ -25,14 +24,13 @@ print", fontcolor="#d2a8ff"];
 	node_8 -> node_7;
 	node_9 -> node_8;
 	node_4 -> node_13;
-	node_13 [label="Assignment
-num", fontcolor="#d73a49"];
-	node_13 -> node_12;
+	node_13 [label="Assignment num", fontcolor="#d73a49"];
 	node_12 [label="Binary(+)", fontcolor="#d73a49"];
 	node_11 [label="ID(num)"];
 	node_12 -> node_11;
 	node_10 [label="Int(1)", fontcolor="#005cc5"];
 	node_12 -> node_10;
+	node_13 -> node_12;
 	node_14 -> node_4;
 	node_0 -> node_18;
 	node_18 [label="Discard", fontcolor="#d6d6d6"];

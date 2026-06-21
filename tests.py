@@ -1,5 +1,6 @@
 import os
 import subprocess
+import shutil  # Added to easily copy files
 import pytest
 
 def discover_test_files():
@@ -19,7 +20,7 @@ def discover_test_files():
 
 
 @pytest.mark.parametrize("source_file", discover_test_files())
-def test_compiler_output(source_file):
+def test_compiler_output(source_file, update_ast):
     base_path, _ = os.path.splitext(source_file)
     expected_ast = base_path + ".ast"
     expected_error = base_path + ".error"
@@ -41,6 +42,10 @@ def test_compiler_output(source_file):
         return
 
     assert os.path.exists(actual_ast), f"Expected AST file {actual_ast} was not generated."
+
+    if update_ast:
+        shutil.copyfile(actual_ast, expected_ast)
+        return
 
     with open(expected_ast, "r") as f_exp, open(actual_ast, "r") as f_act:
         assert f_exp.read().strip() == f_act.read().strip(), f"AST mismatch for {source_file}"

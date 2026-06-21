@@ -6,6 +6,7 @@
 
 #include "../../common/Token.h"
 #include "Node.h"
+#include "Type.h"
 
 
 class Statement : public Node {
@@ -43,17 +44,17 @@ private:
 
 class Assignment final : public Statement {
 public:
-    explicit Assignment(Token identifier, Token type, std::unique_ptr<Expression> expr);
+    explicit Assignment(Token identifier, std::unique_ptr<Type> type, std::unique_ptr<Expression> expr);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
     [[nodiscard]] Token& getIdentifier() { return identifier; }
-    [[nodiscard]] Token& getType() { return type; }
+    [[nodiscard]] Type* getType() const { return type.get(); }
     [[nodiscard]] Expression* getExpr() const { return expr.get(); }
 
 private:
     Token identifier;
-    Token type;
+    std::unique_ptr<Type> type;
     std::unique_ptr<Expression> expr;
 };
 
@@ -108,18 +109,18 @@ private:
 
 class Function final : public Statement {
 public:
-    explicit Function(Token name, Token returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
+    explicit Function(Token name, std::unique_ptr<Type> returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
     [[nodiscard]] Token& getName() { return name; }
-    [[nodiscard]] Token& getReturnType() { return returnType; }
+    [[nodiscard]] Type* getReturnType() const { return returnType.get(); }
     [[nodiscard]] std::vector<std::unique_ptr<Parameter>>& getParameters() { return parameters; }
     [[nodiscard]] Scope* getBody() const { return body.get(); }
 
 private:
     Token name;
-    Token returnType;
+    std::unique_ptr<Type> returnType;
     std::vector<std::unique_ptr<Parameter>> parameters;
     std::unique_ptr<Scope> body;
 };

@@ -277,7 +277,9 @@ void Lexer::scanSource() {
         case ':': addToken(COLON); break;
         case ',': addToken(COMMA); break;
         case '~': addToken(INVERSE); break;
+        case '|': addToken(PIPE); break;
 
+        // Curly braces
         case '{': {
             addToken(LEFT_BRACE);
 

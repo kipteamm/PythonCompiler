@@ -25,6 +25,10 @@ class Float;
 class Int;
 class String;
 class JoinedString;
+class GenericType;
+class PrimitiveType;
+class UnionType;
+class UnresolvedType;
 
 
 class ASTVisitor {
@@ -52,6 +56,10 @@ public:
     virtual void visit(Int* node) = 0;
     virtual void visit(String* node) = 0;
     virtual void visit(JoinedString* node) = 0;
+    virtual void visit(GenericType* node) = 0;
+    virtual void visit(PrimitiveType* node) = 0;
+    virtual void visit(UnionType* node) = 0;
+    virtual void visit(UnresolvedType* node) = 0;
 };
 
 

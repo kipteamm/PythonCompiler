@@ -1,0 +1,35 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_3;
+	node_3 [label="Assignment a", fontcolor="#d73a49"];
+	node_1 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_3 -> node_1;
+	node_2 [label="Int(5)", fontcolor="#005cc5"];
+	node_3 -> node_2;
+	node_0 -> node_6;
+	node_6 [label="Assignment b", fontcolor="#d73a49"];
+	node_4 [label="PrimitiveType\nstr", fontcolor="#005cc5"];
+	node_6 -> node_4;
+	node_5 [label="String(hey)", fontcolor="#005cc5"];
+	node_6 -> node_5;
+	node_0 -> node_14;
+	node_14 [label="Assignment c", fontcolor="#d73a49"];
+	node_10 [label="UnionType", fontcolor="#005cc5"];
+	node_7 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_10 -> node_7;
+	node_8 [label="PrimitiveType\nstr", fontcolor="#005cc5"];
+	node_10 -> node_8;
+	node_9 [label="PrimitiveType\nNone", fontcolor="#005cc5"];
+	node_10 -> node_9;
+	node_14 -> node_10;
+	node_13 [label="Binary(or)", fontcolor="#d73a49"];
+	node_11 [label="ID(a)"];
+	node_13 -> node_11;
+	node_12 [label="ID(b)"];
+	node_13 -> node_12;
+	node_14 -> node_13;
+
+}

@@ -2,6 +2,7 @@
 
 #include "nodes/Expression.h"
 #include "nodes/Statement.h"
+#include "nodes/Type.h"
 
 
 ASTRenderer::ASTRenderer() {
@@ -40,16 +41,16 @@ void ASTRenderer::visit(Comment* node) {
 
 
 void ASTRenderer::visit(Assignment* node) {
-    std::string label = "Assignment\n" + node->getIdentifier().lexeme;
-    if (node->getType().type != UNKNOWN) {
-        label += ": " + node->getType().lexeme;
+    oss << "\t" << *node << " [label=\"Assignment " << node->getIdentifier().lexeme << "\", fontcolor=\"#d73a49\"];\n";
+
+    if (node->getType() != nullptr) {
+        node->getType()->accept(this);
+        oss << "\t" << *node << " -> " << *node->getType() << ";\n";
     }
 
-    oss << "\t" << *node << " [label=\"" << label << "\", fontcolor=\"#d73a49\"];\n";
-
     if (node->getExpr()) {
-        oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
         node->getExpr()->accept(this);
+        oss << "\t" << *node << " -> " << *node->getExpr() << ";\n";
     }
 }
 
@@ -91,7 +92,10 @@ void ASTRenderer::visit(ForEach* node) {
 
 
 void ASTRenderer::visit(Function* node) {
-    oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << " -> " << node->getReturnType().lexeme << "\", fontcolor=\"#d73a49\"];\n";
+    oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << "\", fontcolor=\"#d73a49\"];\n";
+
+    node->getReturnType()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getReturnType() << ";\n";
 
     for (const std::unique_ptr<Parameter>& param : node->getParameters()) {
         param->accept(this);
@@ -130,7 +134,10 @@ void ASTRenderer::visit(If* node) {
 
 
 void ASTRenderer::visit(Parameter* node) {
-    oss << "\t" << *node << " [label=\"Parameter\n" << node->getIdentifier().lexeme << ": " << node->getType().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+    oss << "\t" << *node << " [label=\"Parameter\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+
+    node->getType()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getType() << ";\n";
 
     if (node->getInitValue() == nullptr) return;
 
@@ -221,3 +228,32 @@ void ASTRenderer::visit(JoinedString* node) {
     }
 }
 
+
+void ASTRenderer::visit(PrimitiveType* node) {
+    oss << "\t" << *node << " [label=\"PrimitiveType\\n" << node->getToken().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+}
+
+
+void ASTRenderer::visit(UnionType* node) {
+    oss << "\t" << *node << " [label=\"UnionType\", fontcolor=\"#005cc5\"];\n";
+
+    for (const auto& innerType : node->getTypes()) {
+        innerType->accept(this);
+        oss << "\t" << *node << " -> " << *innerType << ";\n";
+    }
+}
+
+
+void ASTRenderer::visit(GenericType* node) {
+    oss << "\t" << *node << " [label=\"GenericType\\n" << node->getBase().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+
+    for (const auto& argType : node->getArguments()) {
+        argType->accept(this);
+        oss << "\t" << *node << " -> " << *argType << ";\n";
+    }
+}
+
+
+void ASTRenderer::visit(UnresolvedType* node) {
+    oss << "\t" << *node << " [label=\"PrimitiveType\\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+}

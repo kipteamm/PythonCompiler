@@ -4,6 +4,8 @@
 
 #include "../ast/nodes/Expression.h"
 #include "../ast/nodes/Statement.h"
+#include "../ast/nodes/Type.h"
+
 #include "../symbol/SymbolTable.h"
 #include "../common/Token.h"
 
@@ -33,13 +35,16 @@ private:
     [[nodiscard]] std::unique_ptr<Statement> statement();
 
     [[nodiscard]] std::unique_ptr<Assignment> assignment();
-    [[nodiscard]] std::unique_ptr<Comment> comment();
     [[nodiscard]] std::unique_ptr<Function> function();
     [[nodiscard]] std::unique_ptr<If> if_();
     [[nodiscard]] std::unique_ptr<Parameter> parameter();
     [[nodiscard]] std::unique_ptr<Return> return_();
     [[nodiscard]] std::unique_ptr<While> while_();
     [[nodiscard]] std::unique_ptr<ForEach> for_();
+
+    // TYPES
+    [[nodiscard]] std::unique_ptr<Type> type();
+    [[nodiscard]] std::unique_ptr<Type> singleType();
 
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression();

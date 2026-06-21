@@ -3,38 +3,43 @@ digraph AST {
 
 	node [shape=box, fontname="Courier"];
 	node_0[label="Scope"];
-	node_0 -> node_8;
-	node_8 [label="Function
-test -> float", fontcolor="#d73a49"];
-	node_1 [label="Parameter
-a: int", fontcolor="#005cc5"];
-	node_8 -> node_1;
+	node_0 -> node_11;
+	node_11 [label="Function
+test", fontcolor="#d73a49"];
+	node_5 [label="PrimitiveType\nfloat", fontcolor="#005cc5"];
+	node_11 -> node_5;
 	node_2 [label="Parameter
-b: float", fontcolor="#005cc5"];
-	node_8 -> node_2;
-	node_3[label="Scope"];
-	node_3 -> node_7;
-	node_7 [label="Return", fontcolor="#d73a49"];
-	node_6 [label="Binary(*)", fontcolor="#d73a49"];
-	node_4 [label="ID(a)"];
-	node_6 -> node_4;
-	node_5 [label="ID(b)"];
-	node_6 -> node_5;
-	node_7 -> node_6;
-	node_8 -> node_3;
-	node_0 -> node_10;
-	node_10 [label="Assignment
-x", fontcolor="#d73a49"];
+a", fontcolor="#005cc5"];
+	node_1 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_2 -> node_1;
+	node_11 -> node_2;
+	node_4 [label="Parameter
+b", fontcolor="#005cc5"];
+	node_3 [label="PrimitiveType\nfloat", fontcolor="#005cc5"];
+	node_4 -> node_3;
+	node_11 -> node_4;
+	node_6[label="Scope"];
+	node_6 -> node_10;
+	node_10 [label="Return", fontcolor="#d73a49"];
+	node_9 [label="Binary(*)", fontcolor="#d73a49"];
+	node_7 [label="ID(a)"];
+	node_9 -> node_7;
+	node_8 [label="ID(b)"];
+	node_9 -> node_8;
 	node_10 -> node_9;
-	node_9 [label="Int(5)", fontcolor="#005cc5"];
-	node_0 -> node_14;
-	node_14 [label="Discard", fontcolor="#d6d6d6"];
-	node_13 [label="FunctionCall
-test", fontcolor="#d2a8ff"];
-	node_11 [label="Int(1)", fontcolor="#005cc5"];
-	node_13 -> node_11;
-	node_12 [label="ID(x)"];
+	node_11 -> node_6;
+	node_0 -> node_13;
+	node_13 [label="Assignment x", fontcolor="#d73a49"];
+	node_12 [label="Int(5)", fontcolor="#005cc5"];
 	node_13 -> node_12;
-	node_14 -> node_13;
+	node_0 -> node_17;
+	node_17 [label="Discard", fontcolor="#d6d6d6"];
+	node_16 [label="FunctionCall
+test", fontcolor="#d2a8ff"];
+	node_14 [label="Int(1)", fontcolor="#005cc5"];
+	node_16 -> node_14;
+	node_15 [label="ID(x)"];
+	node_16 -> node_15;
+	node_17 -> node_16;
 
 }

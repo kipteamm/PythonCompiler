@@ -33,19 +33,27 @@ public:
 };
 
 
+class Type : public Node {
+public:
+    Type() = default;
+
+    void accept(ASTVisitor *visitor) override = 0;
+};
+
+
 class Parameter final : public Node {
 public:
-    explicit Parameter(Token type, Token identifier, std::unique_ptr<Expression> initValue);
+    explicit Parameter(Token identifier, std::unique_ptr<Type> type, std::unique_ptr<Expression> initValue);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); };
 
-    [[nodiscard]] Token& getType() { return type; }
     [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] Type* getType() const { return type.get(); }
     [[nodiscard]] Expression* getInitValue() const { return initValue.get(); }
 
 private:
-    Token type;
     Token identifier;
+    std::unique_ptr<Type> type;
     std::unique_ptr<Expression> initValue;
 };
 

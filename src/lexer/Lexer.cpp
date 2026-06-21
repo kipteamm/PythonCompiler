@@ -330,9 +330,11 @@ void Lexer::scanSource() {
             addStringOrChar(stringType(c), c, false); break;
 
         // Comments
-        case '#':
+        case '#': {
             while (peek() != '\n' && !atEnd()) advance();
-            addToken(COMMENT); break;
+            //addToken(COMMENT); break;
+            break;
+        }
 
         default:
             if (isDigit(c))

@@ -10,6 +10,7 @@ start: statement* EOF;
 statement
     : assignment
     | COMMENT
+    | for
     | function
     | if_statement
     | while
@@ -48,13 +49,16 @@ primary
 arguments: argument (',' arguments)*;
 argument: expression;
 
+// The expression will later HAVE to have an iterator type
+for: 'for' IDENTIFIER 'in' expression ':' statement+ loop_else?;
+
 if_statement: 'if' expression ':' statement+ else_statement?;
 else_statement
     : 'else' ':' statement+
     | 'elif' expression ':' statement+ else_statement?;
 
-while: 'while' expression ':' statement+ loop_else?
-loop_else: 'else' ':' statement+
+while: 'while' expression ':' statement+ loop_else?;
+loop_else: 'else' ':' statement+;
 
 /* JUST GAWDDADN STRINGS */
 string

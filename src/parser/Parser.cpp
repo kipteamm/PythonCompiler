@@ -90,7 +90,6 @@ std::unique_ptr<Statement> Parser::statement() {
         }
 
         case DEF:         return function();
-        case COMMENT:     return comment();
         case IF:          return if_();
         case RETURN:      return return_();
         case WHILE:       return while_();
@@ -152,10 +151,10 @@ std::unique_ptr<Assignment> Parser::assignment() {
 }
 
 
-std::unique_ptr<Comment> Parser::comment() {
-    const Token& comment = consume(COMMENT, "expected comment");
-    return std::make_unique<Comment>(comment.lexeme);
-}
+// std::unique_ptr<Comment> Parser::comment() {
+//     const Token& comment = consume(COMMENT, "expected comment");
+//     return std::make_unique<Comment>(comment.lexeme);
+// }
 
 
 std::unique_ptr<Function> Parser::function() {

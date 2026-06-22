@@ -5,3 +5,7 @@ def identity[T](x: T) -> T:
 # Bounded type parameter
 def add[T: int | float](x: T, y: T) -> T:
     return x + y
+
+
+result = identity[str]("hello")
+sum_mixed = add[float](5, 4.5)

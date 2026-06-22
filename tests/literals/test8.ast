@@ -6,9 +6,9 @@ digraph AST {
 	node_0 -> node_10;
 	node_10 [label="Assignment mapping", fontcolor="#d73a49"];
 	node_4 [label="GenericType\ndict", fontcolor="#005cc5"];
-	node_2 [label="PrimitiveType\nstr", fontcolor="#005cc5"];
+	node_2 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
 	node_4 -> node_2;
-	node_3 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_3 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_4 -> node_3;
 	node_10 -> node_4;
 	node_9 [label="Dictionary", fontcolor="#d2a8ff"];

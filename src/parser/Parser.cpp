@@ -155,7 +155,25 @@ std::unique_ptr<Function> Parser::function() {
     advance(); // DEF keyword
 
     const Token& identifier = consume(IDENTIFIER, "expected function name");
-    consume(LEFT_PAREN, "expected '(' after function name");
+
+    // Generic function with type parameters
+    std::vector<std::unique_ptr<TypeParameter>> typeParameters;
+
+    if (match(LEFT_BRACKET)) {
+        do {
+            Token typeName = consume(IDENTIFIER, "expected type parameter name");
+
+            std::unique_ptr<Type> bound = nullptr;
+            if (match(COLON))
+                bound = type();
+
+            typeParameters.push_back(std::make_unique<TypeParameter>(typeName, std::move(bound)));
+        } while (match(COMMA));
+
+        consume(RIGHT_BRACKET, "expected ']' after generic type parameters");
+    }
+
+    consume(LEFT_PAREN, "expected '(' after function name (and optional type parameters)");
 
     std::vector<std::unique_ptr<Parameter>> parameters;
 
@@ -173,7 +191,7 @@ std::unique_ptr<Function> Parser::function() {
 
     auto scope = this->scope();
 
-    return std::make_unique<Function>(identifier, std::move(returnType), std::move(parameters), std::move(scope));
+    return std::make_unique<Function>(identifier, std::move(typeParameters), std::move(returnType), std::move(parameters), std::move(scope));
 }
 
 
@@ -350,7 +368,7 @@ std::unique_ptr<Expression> Parser::expression_(std::unique_ptr<Expression> lhs)
 }
 
 
-std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
+std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token, std::vector<std::unique_ptr<Type>> typeArguments) {
     std::vector<std::unique_ptr<Expression>> arguments;
 
     while (!match(RIGHT_PAREN)) {
@@ -360,7 +378,7 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token) {
         consume(COMMA, "Expected next argument");
     }
 
-    return std::make_unique<FunctionCall>(token, std::move(arguments));
+    return std::make_unique<FunctionCall>(token, std::move(typeArguments), std::move(arguments));
 }
 
 
@@ -369,12 +387,25 @@ std::unique_ptr<Expression> Parser::primary() {
         case IDENTIFIER: {
             // Identifier literals can either be a
             //  - a function call: the token is followed by a '('
+            //  - a function call: the token is followed by a '[' -> explicit
+            //    generic arguments
             //  - variable identifier: the token is not followed by anuthing of
             //    signficicance
-
             const auto identifier = advance();
+
+            // Check for explicit generic type arguments
+            std::vector<std::unique_ptr<Type>> typeArgs = {};
+
+            if (match(LEFT_BRACKET)) {
+                do {
+                    typeArgs.push_back(type());
+                } while (match(COMMA));
+
+                consume(RIGHT_BRACKET, "expected ']' after type arguments");
+            }
+
             if (match(LEFT_PAREN))
-                return functionCall(identifier);
+                return functionCall(identifier, std::move(typeArgs));
 
             return std::make_unique<Identifier>(identifier.lexeme);
         }

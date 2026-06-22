@@ -38,6 +38,7 @@ public:
     void visit(JoinedString* node) override;
     void visit(GenericType* node) override;
     void visit(PrimitiveType* node) override;
+    void visit(TypeParameter* node) override;
     void visit(UnionType* node) override;
     void visit(UnresolvedType* node) override;
 

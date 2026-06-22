@@ -1,0 +1,78 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_8;
+	node_8 [label="Function
+identity", fontcolor="#d73a49"];
+	node_1 [label="TypeParameter\nT", fontcolor="#005cc5"];
+	node_8 -> node_1;
+	node_4 [label="UnresolvedType\nT", fontcolor="#005cc5"];
+	node_8 -> node_4;
+	node_3 [label="Parameter
+x", fontcolor="#005cc5"];
+	node_2 [label="UnresolvedType\nT", fontcolor="#005cc5"];
+	node_3 -> node_2;
+	node_8 -> node_3;
+	node_5[label="Scope"];
+	node_5 -> node_7;
+	node_7 [label="Return", fontcolor="#d73a49"];
+	node_6 [label="ID(x)"];
+	node_7 -> node_6;
+	node_8 -> node_5;
+	node_0 -> node_23;
+	node_23 [label="Function
+add", fontcolor="#d73a49"];
+	node_12 [label="TypeParameter\nT", fontcolor="#005cc5"];
+	node_11 [label="UnionType", fontcolor="#005cc5"];
+	node_9 [label="UnresolvedType\nint", fontcolor="#005cc5"];
+	node_11 -> node_9;
+	node_10 [label="UnresolvedType\nfloat", fontcolor="#005cc5"];
+	node_11 -> node_10;
+	node_12 -> node_11;
+	node_23 -> node_12;
+	node_17 [label="UnresolvedType\nT", fontcolor="#005cc5"];
+	node_23 -> node_17;
+	node_14 [label="Parameter
+x", fontcolor="#005cc5"];
+	node_13 [label="UnresolvedType\nT", fontcolor="#005cc5"];
+	node_14 -> node_13;
+	node_23 -> node_14;
+	node_16 [label="Parameter
+y", fontcolor="#005cc5"];
+	node_15 [label="UnresolvedType\nT", fontcolor="#005cc5"];
+	node_16 -> node_15;
+	node_23 -> node_16;
+	node_18[label="Scope"];
+	node_18 -> node_22;
+	node_22 [label="Return", fontcolor="#d73a49"];
+	node_21 [label="Binary(+)", fontcolor="#d73a49"];
+	node_19 [label="ID(x)"];
+	node_21 -> node_19;
+	node_20 [label="ID(y)"];
+	node_21 -> node_20;
+	node_22 -> node_21;
+	node_23 -> node_18;
+	node_0 -> node_27;
+	node_27 [label="Assignment result", fontcolor="#d73a49"];
+	node_26 [label="FunctionCall
+identity", fontcolor="#d2a8ff"];
+	node_24 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
+	node_26 -> node_24;
+	node_25 [label="String(hello)", fontcolor="#005cc5"];
+	node_26 -> node_25;
+	node_27 -> node_26;
+	node_0 -> node_32;
+	node_32 [label="Assignment sum_mixed", fontcolor="#d73a49"];
+	node_31 [label="FunctionCall
+add", fontcolor="#d2a8ff"];
+	node_28 [label="UnresolvedType\nfloat", fontcolor="#005cc5"];
+	node_31 -> node_28;
+	node_29 [label="Int(5)", fontcolor="#005cc5"];
+	node_31 -> node_29;
+	node_30 [label="Float(4.5)", fontcolor="#005cc5"];
+	node_31 -> node_30;
+	node_32 -> node_31;
+
+}

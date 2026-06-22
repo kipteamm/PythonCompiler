@@ -6,7 +6,7 @@ digraph AST {
 	node_0 -> node_8;
 	node_8 [label="Assignment items", fontcolor="#d73a49"];
 	node_3 [label="GenericType\nlist", fontcolor="#005cc5"];
-	node_2 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_2 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_3 -> node_2;
 	node_8 -> node_3;
 	node_7 [label="List", fontcolor="#005cc5"];
@@ -20,9 +20,9 @@ digraph AST {
 	node_0 -> node_18;
 	node_18 [label="Assignment mapping", fontcolor="#d73a49"];
 	node_12 [label="GenericType\ndict", fontcolor="#005cc5"];
-	node_10 [label="PrimitiveType\nstr", fontcolor="#005cc5"];
+	node_10 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
 	node_12 -> node_10;
-	node_11 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_11 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_12 -> node_11;
 	node_18 -> node_12;
 	node_17 [label="Dictionary", fontcolor="#d2a8ff"];
@@ -40,9 +40,9 @@ digraph AST {
 	node_25 [label="GenericType\nlist", fontcolor="#005cc5"];
 	node_24 [label="GenericType\nlist", fontcolor="#005cc5"];
 	node_23 [label="UnionType", fontcolor="#005cc5"];
-	node_21 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_21 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_23 -> node_21;
-	node_22 [label="PrimitiveType\nfloat", fontcolor="#005cc5"];
+	node_22 [label="UnresolvedType\nfloat", fontcolor="#005cc5"];
 	node_23 -> node_22;
 	node_24 -> node_23;
 	node_25 -> node_24;

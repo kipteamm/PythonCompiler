@@ -29,6 +29,7 @@ class String;
 class JoinedString;
 class GenericType;
 class PrimitiveType;
+class TypeParameter;
 class UnionType;
 class UnresolvedType;
 
@@ -62,6 +63,7 @@ public:
     virtual void visit(JoinedString* node) = 0;
     virtual void visit(GenericType* node) = 0;
     virtual void visit(PrimitiveType* node) = 0;
+    virtual void visit(TypeParameter* node) = 0;
     virtual void visit(UnionType* node) = 0;
     virtual void visit(UnresolvedType* node) = 0;
 };

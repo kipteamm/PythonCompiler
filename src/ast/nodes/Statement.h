@@ -109,17 +109,25 @@ private:
 
 class Function final : public Statement {
 public:
-    explicit Function(Token name, std::unique_ptr<Type> returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body);
+    explicit Function(
+        Token name,
+        std::vector<std::unique_ptr<TypeParameter>> typeParameters,
+        std::unique_ptr<Type> returnType,
+        std::vector<std::unique_ptr<Parameter>> parameters,
+        std::unique_ptr<Scope> body
+    );
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
 
     [[nodiscard]] Token& getName() { return name; }
+    [[nodiscard]] std::vector<std::unique_ptr<TypeParameter>>& getTypeParameters() { return typeParameters; }
     [[nodiscard]] Type* getReturnType() const { return returnType.get(); }
     [[nodiscard]] std::vector<std::unique_ptr<Parameter>>& getParameters() { return parameters; }
     [[nodiscard]] Scope* getBody() const { return body.get(); }
 
 private:
     Token name;
+    std::vector<std::unique_ptr<TypeParameter>> typeParameters;
     std::unique_ptr<Type> returnType;
     std::vector<std::unique_ptr<Parameter>> parameters;
     std::unique_ptr<Scope> body;

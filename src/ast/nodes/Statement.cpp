@@ -19,8 +19,8 @@ ForEach::ForEach(Token identifier, std::unique_ptr<Expression> iterable, std::un
     : identifier(std::move(identifier)), iterable(std::move(iterable)), bodyScope(std::move(bodyScope)), elseScope(std::move(elseScope)) {}
 
 
-Function::Function(Token name, std::unique_ptr<Type> returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body)
-    : name(std::move(name)), returnType(std::move(returnType)), parameters(std::move(parameters)), body(std::move(body)) {}
+Function::Function(Token name, std::vector<std::unique_ptr<TypeParameter>> typeParameters, std::unique_ptr<Type> returnType, std::vector<std::unique_ptr<Parameter>> parameters, std::unique_ptr<Scope> body)
+    : name(std::move(name)), typeParameters(std::move(typeParameters)), returnType(std::move(returnType)), parameters(std::move(parameters)), body(std::move(body)) {}
 
 
 If::If(std::unique_ptr<Expression> condition, std::unique_ptr<Scope> thenScope, std::unique_ptr<Scope> elseScope)

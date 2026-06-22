@@ -94,6 +94,11 @@ void ASTRenderer::visit(ForEach* node) {
 void ASTRenderer::visit(Function* node) {
     oss << "\t" << *node << " [label=\"Function\n" << node->getName().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
+    for (const std::unique_ptr<TypeParameter>& param : node->getTypeParameters()) {
+        param->accept(this);
+        oss << "\t" << *node << " -> " << *param << ";\n";
+    }
+
     node->getReturnType()->accept(this);
     oss << "\t" << *node << " -> " << *node->getReturnType() << ";\n";
 
@@ -127,7 +132,12 @@ void ASTRenderer::visit(Dictionary* node) {
 void ASTRenderer::visit(FunctionCall* node) {
     oss << "\t" << *node << " [label=\"FunctionCall\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#d2a8ff\"];\n";
 
-    for (const std::unique_ptr<Expression>& arg : node->getArguments()) {
+    for (const auto& arg : node->getTypeArguments()) {
+        arg->accept(this);
+        oss << "\t" << *node << " -> " << *arg << ";\n";
+    }
+
+    for (const auto& arg : node->getArguments()) {
         arg->accept(this);
         oss << "\t" << *node << " -> " << *arg << ";\n";
     }
@@ -261,6 +271,16 @@ void ASTRenderer::visit(PrimitiveType* node) {
 }
 
 
+void ASTRenderer::visit(TypeParameter* node) {
+    oss << "\t" << *node << " [label=\"TypeParameter\\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+
+    if (node->getBound() == nullptr) return;
+
+    node->getBound()->accept(this);
+    oss << "\t" << *node << " -> " << *node->getBound() << ";\n";
+}
+
+
 void ASTRenderer::visit(UnionType* node) {
     oss << "\t" << *node << " [label=\"UnionType\", fontcolor=\"#005cc5\"];\n";
 
@@ -282,5 +302,5 @@ void ASTRenderer::visit(GenericType* node) {
 
 
 void ASTRenderer::visit(UnresolvedType* node) {
-    oss << "\t" << *node << " [label=\"PrimitiveType\\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#005cc5\"];\n";
+    oss << "\t" << *node << " [label=\"UnresolvedType\\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#005cc5\"];\n";
 }

@@ -1,7 +1,3 @@
-items: list[int] = [1, 2, 3]
-
-# Multi-argument generic
-mapping: dict[str, int] = {"apples": 5, "pears": 6}
-
-# Nested generics with unions
-matrix: list[list[int | float]] = [[1, 2.5], [3, 4]]
+a: int = 5 == 5
+b: int = 5 == 5 == 5 == 5
+c: int = (5 == 5) == (5 == 5)

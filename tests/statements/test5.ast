@@ -5,7 +5,7 @@ digraph AST {
 	node_0[label="Scope"];
 	node_0 -> node_3;
 	node_3 [label="Assignment i", fontcolor="#d73a49"];
-	node_1 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_1 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_3 -> node_1;
 	node_2 [label="Int(0)", fontcolor="#005cc5"];
 	node_3 -> node_2;

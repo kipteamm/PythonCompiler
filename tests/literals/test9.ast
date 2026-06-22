@@ -6,7 +6,7 @@ digraph AST {
 	node_0 -> node_8;
 	node_8 [label="Assignment items", fontcolor="#d73a49"];
 	node_3 [label="GenericType\nlist", fontcolor="#005cc5"];
-	node_2 [label="PrimitiveType\nint", fontcolor="#005cc5"];
+	node_2 [label="UnresolvedType\nint", fontcolor="#005cc5"];
 	node_3 -> node_2;
 	node_8 -> node_3;
 	node_7 [label="List", fontcolor="#005cc5"];

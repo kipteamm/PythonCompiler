@@ -37,6 +37,22 @@ private:
 };
 
 
+class TypeParameter final : public Node {
+public:
+    explicit TypeParameter(Token identifier, std::unique_ptr<Type> bound = nullptr);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] Type* getBound() const { return bound.get(); }
+    [[nodiscard]] bool hasBound() const { return bound != nullptr; }
+
+private:
+    Token identifier;
+    std::unique_ptr<Type> bound;
+};
+
+
 class UnionType final : public Type {
 public:
     explicit UnionType(std::vector<std::unique_ptr<Type>> types);

@@ -56,15 +56,17 @@ private:
 
 class FunctionCall final : public Expression {
 public:
-    explicit FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments);
+    explicit FunctionCall(Token identifier, std::vector<std::unique_ptr<Type>> typeArguments, std::vector<std::unique_ptr<Expression>> arguments);
 
     void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
 
     [[nodiscard]] Token& getIdentifier() { return identifier; }
+    [[nodiscard]] std::vector<std::unique_ptr<Type>>& getTypeArguments() { return typeArguments; }
     [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getArguments() { return arguments; }
 
 private:
     Token identifier;
+    std::vector<std::unique_ptr<Type>> typeArguments;
     std::vector<std::unique_ptr<Expression>> arguments;
 };
 

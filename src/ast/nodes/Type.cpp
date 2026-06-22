@@ -12,6 +12,10 @@ PrimitiveType::PrimitiveType(Token type)
     : type(std::move(type)) {}
 
 
+TypeParameter::TypeParameter(Token identifier, std::unique_ptr<Type> bound)
+    : identifier(std::move(identifier)), bound(std::move(bound)) {}
+
+
 UnionType::UnionType(std::vector<std::unique_ptr<Type>> types)
     : types(std::move(types)) {}
 

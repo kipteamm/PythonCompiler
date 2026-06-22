@@ -16,8 +16,8 @@ Dictionary::Dictionary(std::vector<std::unique_ptr<Expression>> keys, std::vecto
     : keys(std::move(keys)), values(std::move(values)) {}
 
 
-FunctionCall::FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments)
-    : identifier(std::move(identifier)), arguments(std::move(arguments)) {}
+FunctionCall::FunctionCall(Token identifier, std::vector<std::unique_ptr<Type>> typeArguments, std::vector<std::unique_ptr<Expression>> arguments)
+    : identifier(std::move(identifier)), typeArguments(std::move(typeArguments)), arguments(std::move(arguments)) {}
 
 
 Identifier::Identifier(std::string name) : name(std::move(name)) {};

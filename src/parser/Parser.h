@@ -49,7 +49,7 @@ private:
     // EXPRESSIONS
     [[nodiscard]] std::unique_ptr<Expression> expression();
     [[nodiscard]] std::unique_ptr<Expression> expression_(std::unique_ptr<Expression> lhs);
-    [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token);
+    [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token, std::vector<std::unique_ptr<Type>> typeArguments);
     [[nodiscard]] std::unique_ptr<Expression> primary();
     [[nodiscard]] std::unique_ptr<JoinedString> fString();
     void keyValue(std::vector<std::unique_ptr<Expression>>& keys, std::vector<std::unique_ptr<Expression>>& values);

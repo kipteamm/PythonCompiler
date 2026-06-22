@@ -16,14 +16,14 @@ statement
     | while
     | return;   // Parser does have a check for whether this is inside a function
 
-type_params: '[' type_param (',' type_param)* ']';
-type_param: IDENTIFIER (':' types)?;
+type_params: '[' single_type (',' single_type)* ']';
+single_type: IDENTIFIER (':' types)?;
 types: TYPE (type_params)? ('|' types)*;
 
 assignment: IDENTIFIER (':' types)? (('=' expression)? | compound_assignment expression);
 compound_assignment: '+=' | '-=' | '/=' | '*=' | '**=' | '//=' | '%='
 
-function: 'def' IDENTIFIER '(' parameters ')' '->' types ':' statement*;
+function: 'def' IDENTIFIER type_params? '(' parameters ')' '->' types ':' statement*;
 parameters: parameter (',' parameter)*;
 parameter: IDENTIFIER ':' types ('=' expression);
 
@@ -40,7 +40,7 @@ composite : primary? (
                         // at least 1
 
 primary
-    : IDENTIFIER '(' arguments ')'  // function call
+    : IDENTIFIER type_params? '(' arguments ')'  // function call
     | IDENTIFIER
     | 'True'
     | 'False'

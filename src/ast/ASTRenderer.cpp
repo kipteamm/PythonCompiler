@@ -108,12 +108,38 @@ void ASTRenderer::visit(Function* node) {
 }
 
 
+void ASTRenderer::visit(Dictionary* node) {
+    oss << "\t" << *node << " [label=\"Dictionary\", fontcolor=\"#d2a8ff\"];\n";
+
+    const auto &keys = node->getKeys();
+    const auto &values = node->getValues();
+
+    for (int i = 0; i < keys.size(); i++) {
+        oss << "\t" << *node << " -> " << *keys[i] << ";\n";
+        keys[i]->accept(this);
+
+        oss << "\t" << *keys[i] << " -> " << *values[i] << ";\n";
+        values[i]->accept(this);
+    }
+}
+
+
 void ASTRenderer::visit(FunctionCall* node) {
     oss << "\t" << *node << " [label=\"FunctionCall\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#d2a8ff\"];\n";
 
     for (const std::unique_ptr<Expression>& arg : node->getArguments()) {
         arg->accept(this);
         oss << "\t" << *node << " -> " << *arg << ";\n";
+    }
+}
+
+
+void ASTRenderer::visit(List* node) {
+    oss << "\t" << *node << " [label=\"List\", fontcolor=\"#005cc5\"];\n";
+
+    for (const std::unique_ptr<Expression>& value : node->getValues()) {
+        value->accept(this);
+        oss << "\t" << *node << " -> " << *value << ";\n";
     }
 }
 
@@ -180,6 +206,7 @@ void ASTRenderer::visit(Binary* node) {
     node->getRhs()->accept(this);
     oss << "\t" << *node << " -> " << *node->getRhs() << ";\n";
 }
+
 
 void ASTRenderer::visit(Unary* node) {
     oss << "\t" << *node << " [label=\"Binary(" << node->getOperation().lexeme << ")\", fontcolor=\"#d73a49\"];\n";

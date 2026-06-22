@@ -48,10 +48,14 @@ primary
     | INTEGER
     | FLOAT
     | string
-    | '(' expression ')';
+    | '(' expression ')'
+    | '[' expression (',' expression)* ']'
+    | '{' key_value (',' key_value)* '}'; // list
 
 arguments: argument (',' arguments)*;
 argument: expression;
+
+key_value: expression ':' expression;
 
 // The expression will later HAVE to have an iterator type
 for: 'for' IDENTIFIER 'in' expression ':' statement+ loop_else?;

@@ -400,6 +400,46 @@ std::unique_ptr<Expression> Parser::primary() {
             return expr;
         }
 
+        // List
+        case LEFT_BRACKET: {
+            advance(); // [
+
+            // Empty list
+            if (match(RIGHT_BRACKET))
+                return std::make_unique<List>();
+
+            std::vector<std::unique_ptr<Expression>> values;
+            values.push_back(expression());
+
+            while (match(COMMA)) {
+                values.push_back(expression());
+            }
+
+            consume(RIGHT_BRACKET, "list not closed");
+            return std::make_unique<List>(std::move(values));
+        }
+
+        // Dictionary
+        case LEFT_BRACE: {
+            advance(); // {
+
+            // Empty dict
+            if (match(RIGHT_BRACE))
+                return std::make_unique<Dictionary>();
+
+            std::vector<std::unique_ptr<Expression>> keys;
+            std::vector<std::unique_ptr<Expression>> values;
+
+            keyValue(keys, values);
+
+            while (match(COMMA)) {
+                keyValue(keys, values);
+            }
+
+            consume(RIGHT_BRACE, "dictionary not closed");
+            return std::make_unique<Dictionary>(std::move(keys), std::move(values));
+        }
+
         default: return nullptr;
     }
 }
@@ -425,4 +465,11 @@ std::unique_ptr<JoinedString> Parser::fString() {
     }
 
     return std::make_unique<JoinedString>(std::move(values));
+}
+
+
+void Parser::keyValue(std::vector<std::unique_ptr<Expression>>& keys, std::vector<std::unique_ptr<Expression>>& values) {
+    keys.push_back(expression());
+    consume(COLON, "':' expected after dictionary key");
+    values.push_back(expression());
 }

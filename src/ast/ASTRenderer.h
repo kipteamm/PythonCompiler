@@ -26,8 +26,10 @@ public:
     void visit(While* node) override;
     void visit(Binary* node) override;
     void visit(Unary* node) override;
-    void visit(Identifier* node) override;
+    void visit(Dictionary* node) override;
     void visit(FunctionCall *node) override;
+    void visit(Identifier* node) override;
+    void visit(List *node) override;
     void visit(Bool *node) override;
     void visit(Char *node) override;
     void visit(Float* node) override;

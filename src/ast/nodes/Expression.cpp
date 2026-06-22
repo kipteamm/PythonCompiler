@@ -10,11 +10,23 @@ Unary::Unary(Token operation, std::unique_ptr<Expression> expr)
     : expr(std::move(expr)), operation(std::move(operation)) {}
 
 
+Dictionary::Dictionary() = default;
+
+Dictionary::Dictionary(std::vector<std::unique_ptr<Expression>> keys, std::vector<std::unique_ptr<Expression>> values)
+    : keys(std::move(keys)), values(std::move(values)) {}
+
+
 FunctionCall::FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments)
     : identifier(std::move(identifier)), arguments(std::move(arguments)) {}
 
 
 Identifier::Identifier(std::string name) : name(std::move(name)) {};
+
+
+List::List() = default;
+
+List::List(std::vector<std::unique_ptr<Expression>> values)
+    : values(std::move(values)) {}
 
 
 Bool::Bool(const bool value) : value(value) {}

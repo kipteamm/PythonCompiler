@@ -38,6 +38,22 @@ private:
 };
 
 
+class Dictionary final : public Expression {
+public:
+    Dictionary();
+    explicit Dictionary(std::vector<std::unique_ptr<Expression>> keys, std::vector<std::unique_ptr<Expression>> values);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getKeys() { return keys; }
+    [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getValues() { return values; }
+
+private:
+    std::vector<std::unique_ptr<Expression>> keys;
+    std::vector<std::unique_ptr<Expression>> values;
+};
+
+
 class FunctionCall final : public Expression {
 public:
     explicit FunctionCall(Token identifier, std::vector<std::unique_ptr<Expression>> arguments);
@@ -63,6 +79,20 @@ public:
 
 private:
     std::string name;
+};
+
+
+class List final : public Expression {
+public:
+    List();
+    explicit List(std::vector<std::unique_ptr<Expression>> values);
+
+    void accept(ASTVisitor* visitor) override { return visitor->visit(this); };
+
+    [[nodiscard]] std::vector<std::unique_ptr<Expression>>& getValues() { return values; }
+
+private:
+    std::vector<std::unique_ptr<Expression>> values;
 };
 
 

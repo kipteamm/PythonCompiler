@@ -1,0 +1,24 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_2;
+	node_2 [label="Assignment a", fontcolor="#d73a49"];
+	node_1 [label="Int(-1)", fontcolor="#005cc5"];
+	node_2 -> node_1;
+	node_0 -> node_4;
+	node_4 [label="Assignment b", fontcolor="#d73a49"];
+	node_3 [label="Float(-10.4)", fontcolor="#005cc5"];
+	node_4 -> node_3;
+	node_0 -> node_8;
+	node_8 [label="Discard", fontcolor="#d6d6d6"];
+	node_7 [label="FunctionCall
+print", fontcolor="#d2a8ff"];
+	node_5 [label="ID(a)"];
+	node_7 -> node_5;
+	node_6 [label="ID(b)"];
+	node_7 -> node_6;
+	node_8 -> node_7;
+
+}

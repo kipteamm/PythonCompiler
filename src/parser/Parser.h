@@ -43,7 +43,10 @@ private:
     [[nodiscard]] std::unique_ptr<ForEach> for_();
     [[nodiscard]] std::unique_ptr<Match> match_();
     [[nodiscard]] std::unique_ptr<Case> case_();
-    [[nodiscard]] std::unique_ptr<Pattern> pattern();
+    [[nodiscard]] std::unique_ptr<Pattern> casePattern();
+    [[nodiscard]] std::unique_ptr<Pattern> orPattern();
+    [[nodiscard]] std::unique_ptr<Pattern> primaryPattern();
+    [[nodiscard]] std::unique_ptr<SequencePattern> sequencePattern(TOKENTYPE closingToken);
 
     // TYPES
     [[nodiscard]] std::unique_ptr<Type> type();

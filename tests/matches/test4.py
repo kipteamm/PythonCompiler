@@ -1,5 +1,5 @@
 # Dict Destructuring
-def mapping(user_dict):
+def mapping(user_dict: dict[str, str | int]) -> str:
     match user_dict:
         case {"role": "admin", "name": name}:
             return f"Admin user: {name}"

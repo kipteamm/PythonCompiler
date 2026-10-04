@@ -1,5 +1,5 @@
 # Or-Patterns
-def or_pattern(x):
+def or_pattern(x: int | str) -> str:
     match x:
         case 1 | 2 | 3:
             return "small number"
@@ -9,12 +9,14 @@ def or_pattern(x):
             return "other"
 
 
-# Pattern Guards (if condition)
-def guard(point):
+# Tuple capture
+def tuples(point: tuple[int, int]) -> str:
     match point:
-        case (x, y) if x == y:
-            return "diagonal"
-        case (x, y) if x > 0 and y > 0:
-            return "quadrant 1"
+        case (-1, -1) | (1, 1):
+            return "-1/1"
+        case (0, 0):
+            return "0, 0"
+        case (0, y):
+            return f"0, {y}"
         case (x, y):
-            return "other point"
+            return f"{x}, {y}"

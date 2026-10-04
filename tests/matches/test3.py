@@ -1,5 +1,5 @@
 # Fixed & Variable Length Sequences
-def sequences(data):
+def sequences(data: list[int]) -> str:
     match data:
         case []:
             return "empty"

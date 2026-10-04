@@ -1,7 +1,9 @@
 /*
  * THIS GRAMMAR IS A REPRESENTATION OF WHAT THE PARSER CLASS DOES, IT IS NOT
  * ACTAULLY USED TO GENERATE THE PARSER CLASS. THAT IS ALSO THE REASON SOME
- * ANTLR4 SYNTAX ERRORS CAN BE FOUND (CUZ I CAN'T BE BOTHERED)
+ * ANTLR4 SYNTAX ERRORS CAN BE FOUND (CUZ I CAN'T BE BOTHERED).
+ * SIMIRLY THERE IS NO MENTION OF INDENTS AND DEDENTS, WHILE THIS IS IMPORTANT
+ * FOR A PYTHON GRAMMAR TO BE CORRECT, I REALLY CAN'T BE BOTHERED :)
 **/
 
 start: statement* EOF;
@@ -13,6 +15,7 @@ statement
     | for
     | function
     | if_statement
+    | match
     | while
     | return;   // Parser does have a check for whether this is inside a function
 
@@ -39,15 +42,18 @@ composite : primary? (
         ) primary?;     // both primaries are optional, but the parser enforces
                         // at least 1
 
+literal
+    : 'True'
+    | 'False'
+    | CHARACTER
+    | '-'? INTEGER
+    | '-'? FLOAT
+    | string;
+
 primary
     : IDENTIFIER type_params? '(' arguments ')'  // function call
     | IDENTIFIER
-    | 'True'
-    | 'False'
-    | CHARACTER
-    | INTEGER
-    | FLOAT
-    | string
+    | literal
     | '(' expression ')'
     | '[' expression (',' expression)* ']'
     | '{' key_value (',' key_value)* '}'; // list
@@ -64,6 +70,13 @@ if_statement: 'if' expression ':' statement+ else_statement?;
 else_statement
     : 'else' ':' statement+
     | 'elif' expression ':' statement+ else_statement?;
+
+match: 'match' expression ':' case+;
+case: 'case' pattern ('|' pattern)* ':';
+pattern
+    : IDENTIFIER
+    | literal
+    | ('(' | '[') literal (',' literal)* (')' | ']'); // sequence
 
 while: 'while' expression ':' statement+ loop_else?;
 loop_else: 'else' ':' statement+;

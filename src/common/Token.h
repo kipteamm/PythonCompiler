@@ -66,6 +66,9 @@ inline bool isString(const TOKENTYPE type) {
     return type == STRING || type == LONG_STRING;
 }
 
+inline bool isSequenceCloser(const TOKENTYPE type) {
+    return type == RIGHT_PAREN || type == RIGHT_BRACKET;
+}
 
 static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"False",    FALSE},

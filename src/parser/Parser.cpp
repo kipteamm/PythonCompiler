@@ -302,6 +302,9 @@ std::unique_ptr<Match> Parser::match_() {
         cases.push_back(std::move(case_));
     }
 
+    if (cases.size() == 0)
+        throw new std::runtime_error("invalid syntax");
+
     consume(DEDENT, "not sure tbh");
 
     return std::make_unique<Match>(std::move(expr), std::move(cases));
@@ -311,49 +314,95 @@ std::unique_ptr<Match> Parser::match_() {
 std::unique_ptr<Case> Parser::case_() {
     advance(); // case
 
-    std::vector<std::unique_ptr<Pattern>> patterns;
+    auto pattern = casePattern();
 
-    while (true) {
-        patterns.push_back(pattern());
+    std::unique_ptr<Expression> guard = nullptr;
+    if (match(IF))
+        guard = expression();
 
-        if (peek().type != PIPE) break;
-    }
-
-    // We generate a list of patterns (always of length 1 unless it is an or pattern.
-    std::unique_ptr<Pattern> pattern;
-    if (patterns.size() > 1)
-        pattern = std::make_unique<OrPattern>(std::move(patterns));
-    else
-        pattern = std::move(patterns[0]);
-
-    consume(COLON, "expected ':'");
+    consume(COLON, "expected ':' after case pattern");
     auto body = scope();
 
-    return std::make_unique<Case>(std::move(pattern), nullptr, std::move(body));
+    return std::make_unique<Case>(std::move(pattern), std::move(guard), std::move(body));
 }
 
 
-std::unique_ptr<Pattern> Parser::pattern() {
-    switch (peek().type) {
-        case IDENTIFIER: {
-            const auto identifier = advance();
+std::unique_ptr<Pattern> Parser::casePattern() {
+    auto pat = orPattern();
 
-            // Wildcard
-            if (identifier.lexeme == "_")
-                return std::make_unique<WildcardPattern>();
+    // Check for open sequence: case 1, 2:
+    if (!match(COMMA))
+        return pat;
 
-            break;
-        }
+    std::vector<std::unique_ptr<Pattern>> elements;
+    elements.push_back(std::move(pat));
 
-        default: {
-            auto expr = literal();
-            return std::make_unique<LiteralPattern>(std::move(expr));
-        }
+    // As long as were not at the end of the file or case OR at the start of
+    // the guard clause.
+    while (peek().type != COLON && peek().type != IF && peek().type != END) {
+        elements.push_back(orPattern());
+        if (!match(COMMA)) break;
     }
 
-    throw new std::runtime_error("invalid syntax");
+    return std::make_unique<SequencePattern>(std::move(elements));
 }
 
+std::unique_ptr<Pattern> Parser::orPattern() {
+    auto first = primaryPattern();
+
+    if (peek().type != PIPE)
+        return first;
+
+    std::vector<std::unique_ptr<Pattern>> alternatives;
+    alternatives.push_back(std::move(first));
+
+    while (match(PIPE))
+        alternatives.push_back(primaryPattern());
+
+    return std::make_unique<OrPattern>(std::move(alternatives));
+}
+
+std::unique_ptr<Pattern> Parser::primaryPattern() {
+    // Parenthesized sequence (x, ...):
+    if (match(LEFT_PAREN))
+        return sequencePattern(RIGHT_PAREN);
+
+    // Bracketed sequence [x, ...]:
+    if (match(LEFT_BRACKET))
+        return sequencePattern(RIGHT_BRACKET);
+
+    if (peek().type == IDENTIFIER) {
+        const auto identifier = advance();
+        if (identifier.lexeme == "_")
+            return std::make_unique<WildcardPattern>();
+
+        return std::make_unique<CapturePattern>(identifier);
+    }
+
+    auto expr = literal();
+    return std::make_unique<LiteralPattern>(std::move(expr));
+}
+
+std::unique_ptr<SequencePattern> Parser::sequencePattern(TOKENTYPE closingToken) {
+    std::vector<std::unique_ptr<Pattern>> elements;
+
+    // Handle empty sequence () or []
+    if (match(closingToken))
+        return std::make_unique<SequencePattern>(std::move(elements));
+
+    while (true) {
+        // Elements of a sequence can themselves be or-patterns: case (1 | 2, 3):
+        elements.push_back(orPattern());
+
+        if (match(closingToken)) break;
+        consume(COMMA, "expected ',' or closing delimiter");
+
+        // Trailing comma case (1,):
+        if (match(closingToken)) break;
+    }
+
+    return std::make_unique<SequencePattern>(std::move(elements));
+}
 
 
 std::unique_ptr<Type> Parser::type() {
@@ -458,23 +507,43 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token, std::vect
 
 std::unique_ptr<Literal> Parser::literal() {
     switch (peek().type) {
-        case FALSE:
-        case TRUE:           return std::make_unique<Bool>(advance().type == TRUE);
+        // In the case of a literal, it may be preceeded by a minus or a plus,
+        // as long as the operator is not followed by something that isn't a
+        // literal
+        case PLUS:
+        case MINUS: {
+            const TOKENTYPE next = tokens.at(current + 1).type;
+            const bool negative = peek().type == MINUS;
 
-        case CHARACTER:      return std::make_unique<Char>(advance().lexeme[0]);
-        case FRACTION:       return std::make_unique<Float>(std::stof(advance().lexeme));
-        case INTEGER:        return std::make_unique<Int>(std::stoi(advance().lexeme));
+            if (next == INTEGER) {
+                advance();
+                return std::make_unique<Int>(std::stoi(advance().lexeme) * (negative? -1: 1));
+            }
+
+            if (next == FRACTION) {
+                advance();
+                return std::make_unique<Float>(std::stof(advance().lexeme) * (negative? -1: 1));
+            }
+
+            return nullptr;
+        }
+
+        case FALSE:
+        case TRUE:          return std::make_unique<Bool>(advance().type == TRUE);
+
+        case CHARACTER:     return std::make_unique<Char>(advance().lexeme[0]);
+        case FRACTION:      return std::make_unique<Float>(std::stof(advance().lexeme));
+        case INTEGER:       return std::make_unique<Int>(std::stoi(advance().lexeme));
 
         case STRING:
-        case LONG_STRING:    return std::make_unique<String>(std::move(advance().lexeme));
+        case LONG_STRING:   return std::make_unique<String>(std::move(advance().lexeme));
 
         case NONE: {
             advance(); // consume NONE token
             return std::make_unique<None>();
         }
 
-        default:
-            return nullptr;
+        default: return nullptr;
     }
 }
 

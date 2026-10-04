@@ -56,11 +56,21 @@ void ASTRenderer::visit(LiteralPattern* node) {
 
 void ASTRenderer::visit(OrPattern* node) {
     oss << "\t" << *node << " [label=\"OrPattern\", fontcolor=\"#d73a49\"];\n";
+
+    for (const auto& option : node->getOptions()) {
+        oss << "\t" << *node << " -> " << *option << ";\n";
+        option->accept(this);
+    }
 }
 
 
 void ASTRenderer::visit(SequencePattern* node) {
     oss << "\t" << *node << " [label=\"SequencePattern\", fontcolor=\"#d73a49\"];\n";
+
+    for (const auto& element : node->getElements()) {
+        oss << "\t" << *node << " -> " << *element << ";\n";
+        element->accept(this);
+    }
 }
 
 

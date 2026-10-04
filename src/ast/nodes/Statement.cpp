@@ -11,6 +11,11 @@ Assignment::Assignment(Token identifier, std::unique_ptr<Type> type, std::unique
     : identifier(std::move(identifier)), type(std::move(type)), expr(std::move(expr)) {}
 
 
+Case::Case(std::unique_ptr<Pattern> pattern, std::unique_ptr<Expression> guard, std::unique_ptr<Scope> body)
+    : pattern(std::move(pattern)), guard(std::move(guard)), body(std::move(body)) {}
+
+
+
 Discard::Discard(std::unique_ptr<Expression> expr)
     : expr(std::move(expr)) {}
 
@@ -25,6 +30,10 @@ Function::Function(Token name, std::vector<std::unique_ptr<TypeParameter>> typeP
 
 If::If(std::unique_ptr<Expression> condition, std::unique_ptr<Scope> thenScope, std::unique_ptr<Scope> elseScope)
     : condition(std::move(condition)), thenScope(std::move(thenScope)), elseScope(std::move(elseScope)) {}
+
+
+Match::Match(std::unique_ptr<Expression> expression, std::vector<std::unique_ptr<Case>> cases)
+    : expression(std::move(expression)), cases(std::move(cases)) {}
 
 
 Return::Return(std::unique_ptr<Expression> expr)

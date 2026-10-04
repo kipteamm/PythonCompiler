@@ -14,12 +14,19 @@ public:
 
     void visit(Scope *node) override;
     void visit(Comment *node) override;
+    void visit(CapturePattern* node) override;
+    void visit(LiteralPattern* node) override;
+    void visit(OrPattern* node) override;
+    void visit(SequencePattern* node) override;
+    void visit(WildcardPattern* node) override;
     void visit(Assignment *node) override;
     void visit(Break *node) override;
+    void visit(Case* node) override;
     void visit(Continue *node) override;
     void visit(Discard *node) override;
     void visit(ForEach* node) override;
     void visit(Function *node) override;
+    void visit(Match* node) override;
     void visit(Parameter* node) override;
     void visit(If* node) override;
     void visit(Return* node) override;

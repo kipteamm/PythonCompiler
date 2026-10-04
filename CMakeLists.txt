@@ -13,4 +13,6 @@ add_executable(PythonCompiler main.cpp
         src/ast/ASTRenderer.cpp
         src/symbol/SymbolTable.cpp
         src/ast/nodes/Type.cpp
+        src/ast/nodes/Pattern.cpp
+        src/ast/nodes/Pattern.h
 )

@@ -75,6 +75,23 @@ public:
 };
 
 
+class Case final : public Statement {
+public:
+    explicit Case(std::unique_ptr<Pattern> pattern, std::unique_ptr<Expression> guard, std::unique_ptr<Scope> body);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Pattern* getPattern() const { return pattern.get(); }
+    [[nodiscard]] Expression* getGuard() const { return guard.get(); }
+    [[nodiscard]] Scope* getBody() const { return body.get(); }
+
+private:
+    std::unique_ptr<Pattern> pattern;
+    std::unique_ptr<Expression> guard; // can be null
+    std::unique_ptr<Scope> body;
+};
+
+
 class Discard final : public Statement {
 public:
     explicit Discard(std::unique_ptr<Expression> expr);
@@ -148,6 +165,21 @@ private:
     std::unique_ptr<Expression> condition;
     std::unique_ptr<Scope> thenScope;
     std::unique_ptr<Scope> elseScope;
+};
+
+
+class Match final : public Statement {
+public:
+    explicit Match(std::unique_ptr<Expression> expression, std::vector<std::unique_ptr<Case>> cases);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Expression* getExpression() const { return expression.get(); }
+    [[nodiscard]] const std::vector<std::unique_ptr<Case>>& getCases() const { return cases; }
+
+private:
+    std::unique_ptr<Expression> expression;
+    std::vector<std::unique_ptr<Case>> cases;
 };
 
 

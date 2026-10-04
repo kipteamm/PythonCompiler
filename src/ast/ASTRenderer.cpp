@@ -2,6 +2,7 @@
 
 #include "nodes/Expression.h"
 #include "nodes/Statement.h"
+#include "nodes/Pattern.h"
 #include "nodes/Type.h"
 
 
@@ -40,6 +41,31 @@ void ASTRenderer::visit(Comment* node) {
 }
 
 
+void ASTRenderer::visit(CapturePattern* node) {
+    oss << "\t" << *node << " [label=\"CapturePattern\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+void ASTRenderer::visit(LiteralPattern* node) {
+    oss << "\t" << *node << " [label=\"LiteralPattern\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+void ASTRenderer::visit(OrPattern* node) {
+    oss << "\t" << *node << " [label=\"OrPattern\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+void ASTRenderer::visit(SequencePattern* node) {
+    oss << "\t" << *node << " [label=\"SequencePattern\", fontcolor=\"#d73a49\"];\n";
+}
+
+
+void ASTRenderer::visit(WildcardPattern* node) {
+    oss << "\t" << *node << " [label=\"WildcardPattern\", fontcolor=\"#d73a49\"];\n";
+}
+
+
 void ASTRenderer::visit(Assignment* node) {
     oss << "\t" << *node << " [label=\"Assignment " << node->getIdentifier().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 
@@ -60,10 +86,14 @@ void ASTRenderer::visit(Break* node) {
 }
 
 
+void ASTRenderer::visit(Case* node) {
+    oss << "\t" << *node << " [label=\"Case\", fontcolor=\"#d73a49\"];\n";
+}
+
+
 void ASTRenderer::visit(Continue* node) {
     oss << "\t" << *node << " [label=\"Continue\", fontcolor=\"#d73a49\"];\n";
 }
-
 
 
 void ASTRenderer::visit(Discard* node) {
@@ -110,6 +140,16 @@ void ASTRenderer::visit(Function* node) {
     node->getBody()->accept(this);
 
     oss << "\t" << *node << " -> " << *node->getBody() << ";\n";
+}
+
+
+void ASTRenderer::visit(Match* node) {
+    oss << "\t" << *node << " [label=\"Match\", fontcolor=\"#d2a8ff\"];\n";
+
+    for (const auto& case_ : node->getCases()) {
+        oss << "\t" << *node << " -> " << *case_ << ";\n";
+        case_->accept(this);
+    }
 }
 
 

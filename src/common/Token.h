@@ -7,7 +7,8 @@
 
 
 enum TOKENTYPE {
-    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET,
+    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, LEFT_BRACKET,
+    RIGHT_BRACKET,
 
     COLON, ARROW, INDENT, DEDENT, COMMA, DOT,
 
@@ -30,10 +31,10 @@ enum TOKENTYPE {
     F_STRING_START, F_STRING_TEXT, F_STRING_END,
 
     // Keywords:
-    FALSE, NONE, TRUE, AS, ASSERT, ASYNC, AWAIT, BREAK, CLASS,
-    CONTINUE, DEF, DEL, ELIF, ELSE, EXCEPT, FINALLY, FOR, FROM,
-    GLOBAL, IF, IMPORT, IN, IS, LAMBDA, NONLOCAL, NOT, PASS,
-    RAISE, RETURN, TRY, WHILE, WITH, YIELD,
+    FALSE, NONE, TRUE, AS, ASSERT, ASYNC, AWAIT, BREAK, CASE, CLASS, CONTINUE,
+    DEF, DEL, ELIF, ELSE, EXCEPT, FINALLY, FOR, FROM, GLOBAL, IF, IMPORT, IN,
+    IS, LAMBDA, MATCH, NONLOCAL, NOT, PASS, RAISE, RETURN, TRY, WHILE, WITH,
+    YIELD,
 
     COMMENT,
     UNKNOWN,
@@ -76,6 +77,7 @@ static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"async",    ASYNC},
     {"await",    AWAIT},
     {"break",    BREAK},
+    {"case",     CASE},
     {"class",    CLASS},
     {"continue", CONTINUE},
     {"def",      DEF},
@@ -92,6 +94,7 @@ static std::unordered_map<std::string, TOKENTYPE> KEYWORDS = {
     {"in",       IN},
     {"is",       IS},
     {"lambda",   LAMBDA},
+    {"match",    MATCH},
     {"nonlocal", NONLOCAL},
     {"not",      NOT},
     {"or",       OR},
@@ -164,6 +167,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case ASYNC:          return "ASYNC";
         case AWAIT:          return "AWAIT";
         case BREAK:          return "BREAK";
+        case CASE:           return "CASE";
         case CLASS:          return "CLASS";
         case CONTINUE:       return "CONTINUE";
         case DEF:            return "DEF";
@@ -180,6 +184,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case IN:             return "IN";
         case IS:             return "IS";
         case LAMBDA:         return "LAMBDA";
+        case MATCH:            return "MATCH";
         case NONLOCAL:       return "NONLOCAL";
         case NOT:            return "NOT";
         case OR:             return "OR";
@@ -219,9 +224,10 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
 struct Token {
     TOKENTYPE type;
     std::string lexeme;
+    int line;
 
-    explicit Token(const TOKENTYPE type, std::string lexeme)
-        : type(type), lexeme(std::move(lexeme)) {}
+    explicit Token(const TOKENTYPE type, std::string lexeme, const int line)
+        : type(type), lexeme(std::move(lexeme)), line(line) {}
 
     [[nodiscard]] friend std::ostream& operator<<(std::ostream& stream, const Token& token) {
         stream << tokenTypeToString(token.type) << " (" << escapeLexeme(token.lexeme) << ")";

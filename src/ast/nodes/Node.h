@@ -33,6 +33,14 @@ public:
 };
 
 
+class Pattern : public Node {
+public:
+    Pattern() = default;
+
+    void accept(ASTVisitor *visitor) override = 0;
+};
+
+
 class Type : public Node {
 public:
     Type() = default;

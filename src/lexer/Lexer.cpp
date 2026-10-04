@@ -42,7 +42,7 @@ std::vector<Token> Lexer::scan() {
         indentStack.pop_back();
     }
 
-    tokens.emplace_back(END, "EOF");
+    tokens.emplace_back(END, "EOF", -1);
     return tokens;
 }
 
@@ -250,12 +250,12 @@ void Lexer::addIdentifier() {
 
 
 void Lexer::addToken(TOKENTYPE type, const std::string &lexeme) {
-    tokens.emplace_back(type, lexeme);
+    tokens.emplace_back(type, lexeme, line);
 }
 
 void Lexer::addToken(TOKENTYPE type) {
     const std::string lexeme = source.substr(start, current - start);
-    tokens.emplace_back(type, lexeme);
+    tokens.emplace_back(type, lexeme, line);
 }
 
 

@@ -1,5 +1,6 @@
 #include "Parser.h"
 
+#include <algorithm>
 #include <iostream>
 
 
@@ -94,6 +95,7 @@ std::unique_ptr<Statement> Parser::statement() {
         case RETURN:      return return_();
         case WHILE:       return while_();
         case FOR:         return for_();
+        case MATCH:       return match_();
 
         case BREAK:
             advance(); return std::make_unique<Break>();
@@ -142,7 +144,7 @@ std::unique_ptr<Assignment> Parser::assignment() {
         const auto [token, lexeme] = getBaseOperator(assignmentType);
         expr = std::make_unique<Binary>(
             std::make_unique<Identifier>(identifier.lexeme),
-            Token{token, lexeme},
+            Token{token, lexeme, -1},
             std::move(expr)
         );
     }
@@ -282,6 +284,78 @@ std::unique_ptr<ForEach> Parser::for_() {
 }
 
 
+std::unique_ptr<Match> Parser::match_() {
+    advance(); // match
+
+    auto expr = expression();
+
+    consume(COLON, "expected ':'");
+
+    std::vector<std::unique_ptr<Case>> cases;
+
+    consume(INDENT, "expected an indented block after 'match' statement");
+
+    // Case consumes the CASE, condition and the body so after that, if it is
+    // followed by another CASE, peek() would indeed be of type CASE again.
+    while (peek().type == CASE) {
+        auto case_ = this->case_();
+        cases.push_back(std::move(case_));
+    }
+
+    consume(DEDENT, "not sure tbh");
+
+    return std::make_unique<Match>(std::move(expr), std::move(cases));
+}
+
+
+std::unique_ptr<Case> Parser::case_() {
+    advance(); // case
+
+    std::vector<std::unique_ptr<Pattern>> patterns;
+
+    while (true) {
+        patterns.push_back(pattern());
+
+        if (peek().type != PIPE) break;
+    }
+
+    // We generate a list of patterns (always of length 1 unless it is an or pattern.
+    std::unique_ptr<Pattern> pattern;
+    if (patterns.size() > 1)
+        pattern = std::make_unique<OrPattern>(std::move(patterns));
+    else
+        pattern = std::move(patterns[0]);
+
+    consume(COLON, "expected ':'");
+    auto body = scope();
+
+    return std::make_unique<Case>(std::move(pattern), nullptr, std::move(body));
+}
+
+
+std::unique_ptr<Pattern> Parser::pattern() {
+    switch (peek().type) {
+        case IDENTIFIER: {
+            const auto identifier = advance();
+
+            // Wildcard
+            if (identifier.lexeme == "_")
+                return std::make_unique<WildcardPattern>();
+
+            break;
+        }
+
+        default: {
+            auto expr = literal();
+            return std::make_unique<LiteralPattern>(std::move(expr));
+        }
+    }
+
+    throw new std::runtime_error("invalid syntax");
+}
+
+
+
 std::unique_ptr<Type> Parser::type() {
     std::vector<std::unique_ptr<Type>> types;
     types.push_back(singleType());
@@ -314,7 +388,7 @@ std::unique_ptr<Type> Parser::singleType() {
             break;
 
         default:
-            throw std::runtime_error("unexpected type " + baseToken.lexeme);
+            throw std::runtime_error("unexpected type '" + baseToken.lexeme + "'");
     }
 
     // Check whether this is a Generic type, if not return early
@@ -382,7 +456,29 @@ std::unique_ptr<FunctionCall> Parser::functionCall(const Token& token, std::vect
 }
 
 
+std::unique_ptr<Literal> Parser::literal() {
+    switch (peek().type) {
+        case FALSE:
+        case TRUE:           return std::make_unique<Bool>(advance().type == TRUE);
+
+        case CHARACTER:      return std::make_unique<Char>(advance().lexeme[0]);
+        case FRACTION:       return std::make_unique<Float>(std::stof(advance().lexeme));
+        case INTEGER:        return std::make_unique<Int>(std::stoi(advance().lexeme));
+
+        case STRING:
+        case LONG_STRING:    return std::make_unique<String>(std::move(advance().lexeme));
+
+        default:
+            return nullptr;
+    }
+}
+
+
 std::unique_ptr<Expression> Parser::primary() {
+    auto literal = this->literal();
+    if (literal != nullptr)
+        return literal;
+
     switch (peek().type) {
         case IDENTIFIER: {
             // Identifier literals can either be a
@@ -409,16 +505,6 @@ std::unique_ptr<Expression> Parser::primary() {
 
             return std::make_unique<Identifier>(identifier.lexeme);
         }
-
-        case FALSE:
-        case TRUE:           return std::make_unique<Bool>(advance().type == TRUE);
-
-        case CHARACTER:      return std::make_unique<Char>(advance().lexeme[0]);
-        case FRACTION:       return std::make_unique<Float>(std::stof(advance().lexeme));
-        case INTEGER:        return std::make_unique<Int>(std::stoi(advance().lexeme));
-
-        case STRING:
-        case LONG_STRING:    return std::make_unique<String>(std::move(advance().lexeme));
 
         case F_STRING_START: return fString();
 

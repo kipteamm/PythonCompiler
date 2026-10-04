@@ -4,6 +4,7 @@
 
 #include "../ast/nodes/Expression.h"
 #include "../ast/nodes/Statement.h"
+#include "../ast/nodes/Pattern.h"
 #include "../ast/nodes/Type.h"
 
 #include "../symbol/SymbolTable.h"
@@ -33,7 +34,6 @@ private:
 
     // STATEMENTS
     [[nodiscard]] std::unique_ptr<Statement> statement();
-
     [[nodiscard]] std::unique_ptr<Assignment> assignment();
     [[nodiscard]] std::unique_ptr<Function> function();
     [[nodiscard]] std::unique_ptr<If> if_();
@@ -41,6 +41,9 @@ private:
     [[nodiscard]] std::unique_ptr<Return> return_();
     [[nodiscard]] std::unique_ptr<While> while_();
     [[nodiscard]] std::unique_ptr<ForEach> for_();
+    [[nodiscard]] std::unique_ptr<Match> match_();
+    [[nodiscard]] std::unique_ptr<Case> case_();
+    [[nodiscard]] std::unique_ptr<Pattern> pattern();
 
     // TYPES
     [[nodiscard]] std::unique_ptr<Type> type();
@@ -50,6 +53,7 @@ private:
     [[nodiscard]] std::unique_ptr<Expression> expression();
     [[nodiscard]] std::unique_ptr<Expression> expression_(std::unique_ptr<Expression> lhs);
     [[nodiscard]] std::unique_ptr<FunctionCall> functionCall(const Token& token, std::vector<std::unique_ptr<Type>> typeArguments);
+    [[nodiscard]] std::unique_ptr<Literal> literal();
     [[nodiscard]] std::unique_ptr<Expression> primary();
     [[nodiscard]] std::unique_ptr<JoinedString> fString();
     void keyValue(std::vector<std::unique_ptr<Expression>>& keys, std::vector<std::unique_ptr<Expression>>& values);

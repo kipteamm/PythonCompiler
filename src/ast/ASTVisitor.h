@@ -32,6 +32,7 @@ class Bool;
 class Char;
 class Float;
 class Int;
+class None;
 class String;
 class JoinedString;
 class GenericType;
@@ -73,6 +74,7 @@ public:
     virtual void visit(Char* node) = 0;
     virtual void visit(Float* node) = 0;
     virtual void visit(Int* node) = 0;
+    virtual void visit(None* node) = 0;
     virtual void visit(String* node) = 0;
     virtual void visit(JoinedString* node) = 0;
     virtual void visit(GenericType* node) = 0;

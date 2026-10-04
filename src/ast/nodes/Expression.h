@@ -153,6 +153,12 @@ private:
 };
 
 
+class None final : public Literal {
+public:
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+};
+
+
 class String final : public Literal {
 public:
     explicit String(std::string value);

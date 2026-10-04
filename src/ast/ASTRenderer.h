@@ -41,6 +41,7 @@ public:
     void visit(Char *node) override;
     void visit(Float* node) override;
     void visit(Int *node) override;
+    void visit(None *node) override;
     void visit(String *node) override;
     void visit(JoinedString* node) override;
     void visit(GenericType* node) override;

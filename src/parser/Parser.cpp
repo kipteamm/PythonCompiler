@@ -468,6 +468,11 @@ std::unique_ptr<Literal> Parser::literal() {
         case STRING:
         case LONG_STRING:    return std::make_unique<String>(std::move(advance().lexeme));
 
+        case NONE: {
+            advance(); // consume NONE token
+            return std::make_unique<None>();
+        }
+
         default:
             return nullptr;
     }

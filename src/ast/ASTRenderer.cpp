@@ -48,6 +48,9 @@ void ASTRenderer::visit(CapturePattern* node) {
 
 void ASTRenderer::visit(LiteralPattern* node) {
     oss << "\t" << *node << " [label=\"LiteralPattern\", fontcolor=\"#d73a49\"];\n";
+
+    oss << "\t" << *node << " -> " << *node->getLiteral() << ";\n";
+    node->getLiteral()->accept(this);
 }
 
 
@@ -88,6 +91,17 @@ void ASTRenderer::visit(Break* node) {
 
 void ASTRenderer::visit(Case* node) {
     oss << "\t" << *node << " [label=\"Case\", fontcolor=\"#d73a49\"];\n";
+
+    oss << "\t" << *node << " -> " << *node->getPattern() << ";\n";
+    node->getPattern()->accept(this);
+
+    if (node->getGuard()) {
+        oss << "\t" << *node << " -> " << *node->getGuard() << ";\n";
+        node->getGuard()->accept(this);
+    }
+
+    oss << "\t" << *node << " -> " << *node->getBody() << ";\n";
+    node->getBody()->accept(this);
 }
 
 
@@ -144,7 +158,10 @@ void ASTRenderer::visit(Function* node) {
 
 
 void ASTRenderer::visit(Match* node) {
-    oss << "\t" << *node << " [label=\"Match\", fontcolor=\"#d2a8ff\"];\n";
+    oss << "\t" << *node << " [label=\"Match\", fontcolor=\"#d73a49\"];\n";
+
+    oss << "\t" << *node << " -> " << *node->getExpression() << ";\n";
+    node->getExpression()->accept(this);
 
     for (const auto& case_ : node->getCases()) {
         oss << "\t" << *node << " -> " << *case_ << ";\n";
@@ -288,6 +305,11 @@ void ASTRenderer::visit(Float* node) {
 
 void ASTRenderer::visit(Int* node) {
     oss << "\t" << *node << " [label=\"Int(" << node->getValue() << ")\", fontcolor=\"#005cc5\"];\n";
+}
+
+
+void ASTRenderer::visit(None* node) {
+    oss << "\t" << *node << " [label=\"None\", fontcolor=\"#005cc5\"];\n";
 }
 
 

@@ -1,0 +1,17 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_1;
+	node_1 [label="Break", fontcolor="#d73a49"];
+	node_0 -> node_5;
+	node_5 [label="If", fontcolor="#d73a49"];
+	node_2 [label="Bool(1)", fontcolor="#005cc5"];
+	node_5 -> node_2;
+	node_3[label="Scope"];
+	node_3 -> node_4;
+	node_4 [label="Continue", fontcolor="#d73a49"];
+	node_5 -> node_3;
+
+}

@@ -18,6 +18,7 @@ public:
     void visit(LiteralPattern* node) override;
     void visit(OrPattern* node) override;
     void visit(SequencePattern* node) override;
+    void visit(StarPattern* node) override;
     void visit(WildcardPattern* node) override;
     void visit(Assignment *node) override;
     void visit(Break *node) override;

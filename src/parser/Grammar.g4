@@ -76,7 +76,12 @@ case: 'case' pattern ('|' pattern)* ':';
 pattern
     : IDENTIFIER
     | literal
-    | ('(' | '[') literal (',' literal)* (')' | ']'); // sequence
+    // Sequence:
+    // NOTE: an element of a sequence may be preceded by a star under specific
+    // requirements, which the parser enforces but are not written out here.
+    //  1. Can only be followed by a literal or an identifier (not a sequence)
+    //  2. Can only occur once per sequence
+    | ('(' | '[') '*'? pattern (',' '*'? pattern)* (')' | ']');
 
 while: 'while' expression ':' statement+ loop_else?;
 loop_else: 'else' ':' statement+;

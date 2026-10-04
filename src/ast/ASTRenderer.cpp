@@ -42,7 +42,7 @@ void ASTRenderer::visit(Comment* node) {
 
 
 void ASTRenderer::visit(CapturePattern* node) {
-    oss << "\t" << *node << " [label=\"CapturePattern\", fontcolor=\"#d73a49\"];\n";
+    oss << "\t" << *node << " [label=\"CapturePattern\n" << node->getIdentifier().lexeme << "\", fontcolor=\"#d73a49\"];\n";
 }
 
 
@@ -71,6 +71,14 @@ void ASTRenderer::visit(SequencePattern* node) {
         oss << "\t" << *node << " -> " << *element << ";\n";
         element->accept(this);
     }
+}
+
+
+void ASTRenderer::visit(StarPattern* node) {
+    oss << "\t" << *node << " [label=\"StarPattern\", fontcolor=\"#d73a49\"];\n";
+
+    oss << "\t" << *node << " -> " << *node->getPattern() << ";\n";
+    node->getPattern()->accept(this);
 }
 
 

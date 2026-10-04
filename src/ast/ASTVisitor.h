@@ -9,6 +9,7 @@ class CapturePattern;
 class LiteralPattern;
 class OrPattern;
 class SequencePattern;
+class StarPattern;
 class WildcardPattern;
 class Assignment;
 class Break;
@@ -52,6 +53,7 @@ public:
     virtual void visit(LiteralPattern* node) = 0;
     virtual void visit(OrPattern* node) = 0;
     virtual void visit(SequencePattern* node) = 0;
+    virtual void visit(StarPattern* node) = 0;
     virtual void visit(WildcardPattern* node) = 0;
     virtual void visit(Break* node) = 0;
     virtual void visit(Case* node) = 0;

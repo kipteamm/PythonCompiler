@@ -113,7 +113,8 @@ x", fontcolor="#005cc5"];
 	node_58 -> node_57;
 	node_57 [label="Case", fontcolor="#d73a49"];
 	node_57 -> node_51;
-	node_51 [label="CapturePattern", fontcolor="#d73a49"];
+	node_51 [label="CapturePattern
+other_val", fontcolor="#d73a49"];
 	node_57 -> node_52;
 	node_52[label="Scope"];
 	node_52 -> node_56;

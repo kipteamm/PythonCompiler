@@ -153,7 +153,8 @@ point", fontcolor="#005cc5"];
 	node_70 -> node_69;
 	node_69 [label="Int(0)", fontcolor="#005cc5"];
 	node_72 -> node_71;
-	node_71 [label="CapturePattern", fontcolor="#d73a49"];
+	node_71 [label="CapturePattern
+y", fontcolor="#d73a49"];
 	node_78 -> node_73;
 	node_73[label="Scope"];
 	node_73 -> node_77;
@@ -169,9 +170,11 @@ point", fontcolor="#005cc5"];
 	node_88 -> node_81;
 	node_81 [label="SequencePattern", fontcolor="#d73a49"];
 	node_81 -> node_79;
-	node_79 [label="CapturePattern", fontcolor="#d73a49"];
+	node_79 [label="CapturePattern
+x", fontcolor="#d73a49"];
 	node_81 -> node_80;
-	node_80 [label="CapturePattern", fontcolor="#d73a49"];
+	node_80 [label="CapturePattern
+y", fontcolor="#d73a49"];
 	node_88 -> node_82;
 	node_82[label="Scope"];
 	node_82 -> node_87;

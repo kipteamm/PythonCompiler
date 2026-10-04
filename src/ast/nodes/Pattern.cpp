@@ -15,5 +15,9 @@ OrPattern::OrPattern(std::vector<std::unique_ptr<Pattern>> options)
     : options(std::move(options)) {}
 
 
+StarPattern::StarPattern(std::unique_ptr<Pattern> pattern)
+    : pattern(std::move(pattern)) {}
+
+
 SequencePattern::SequencePattern(std::vector<std::unique_ptr<Pattern>> elements)
     : elements(std::move(elements)) {}

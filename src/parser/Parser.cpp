@@ -390,9 +390,27 @@ std::unique_ptr<SequencePattern> Parser::sequencePattern(TOKENTYPE closingToken)
     if (match(closingToken))
         return std::make_unique<SequencePattern>(std::move(elements));
 
+    bool hasStar = false;
     while (true) {
-        // Elements of a sequence can themselves be or-patterns: case (1 | 2, 3):
-        elements.push_back(orPattern());
+        // THE only StarPattern of this sequence
+        if (match(STAR)) {
+            if (hasStar) throw new std::runtime_error("multiple starred names in sequence pattern");
+
+            hasStar = true;
+
+            const Token id = consume(IDENTIFIER, "expected identifier or '_' after '*'");
+            std::unique_ptr<Pattern> target;
+
+            if (id.lexeme == "_")
+                target = std::make_unique<WildcardPattern>();
+            else
+                target = std::make_unique<CapturePattern>(id);
+
+            elements.push_back(std::make_unique<StarPattern>(std::move(target)));
+        } else {
+            // Elements of a sequence can themselves be or-patterns: case (1 | 2, 3):
+            elements.push_back(orPattern());
+        }
 
         if (match(closingToken)) break;
         consume(COMMA, "expected ',' or closing delimiter");

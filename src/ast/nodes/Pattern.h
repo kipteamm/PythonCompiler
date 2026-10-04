@@ -15,6 +15,7 @@ public:
     explicit CapturePattern(Token identifier);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
     [[nodiscard]] Token& getIdentifier() { return identifier; }
 
 private:
@@ -28,6 +29,7 @@ public:
     explicit LiteralPattern(std::unique_ptr<Literal> literal);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
     [[nodiscard]] Literal* getLiteral() const { return literal.get(); }
 
 private:
@@ -41,6 +43,7 @@ public:
     explicit OrPattern(std::vector<std::unique_ptr<Pattern>> options);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
     [[nodiscard]] const std::vector<std::unique_ptr<Pattern>>& getOptions() const { return options; }
 
 private:
@@ -54,10 +57,23 @@ public:
     explicit SequencePattern(std::vector<std::unique_ptr<Pattern>> elements);
 
     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
     [[nodiscard]] const std::vector<std::unique_ptr<Pattern>>& getElements() const { return elements; }
 
 private:
     std::vector<std::unique_ptr<Pattern>> elements;
+};
+
+
+class StarPattern final : public Pattern {
+public:
+    explicit StarPattern(std::unique_ptr<Pattern> pattern);
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] Pattern* getPattern() const { return pattern.get(); }
+private:
+    std::unique_ptr<Pattern> pattern;
 };
 
 
@@ -77,6 +93,7 @@ public:
 //     explicit ClassPattern(Token className, std::vector<std::unique_ptr<Pattern>> positionalPatterns);
 //
 //     void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+//
 //     [[nodiscard]] Token& getClassName() { return className; }
 //     [[nodiscard]] const std::vector<std::unique_ptr<Pattern>>& getPositionalPatterns() const { return positionalPatterns; }
 //

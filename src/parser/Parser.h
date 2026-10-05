@@ -43,6 +43,8 @@ private:
     [[nodiscard]] std::unique_ptr<ForEach> for_();
     [[nodiscard]] std::unique_ptr<Match> match_();
     [[nodiscard]] std::unique_ptr<Case> case_();
+
+    // PATTERNS
     [[nodiscard]] std::unique_ptr<Pattern> casePattern();
     [[nodiscard]] std::unique_ptr<Pattern> orPattern();
     [[nodiscard]] std::unique_ptr<Pattern> primaryPattern();

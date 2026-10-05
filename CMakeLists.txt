@@ -15,4 +15,8 @@ add_executable(PythonCompiler main.cpp
         src/ast/nodes/Type.cpp
         src/ast/nodes/Pattern.cpp
         src/ast/nodes/Pattern.h
+        src/parser/Pattern.cpp
+        src/parser/Type.cpp
+        src/parser/Expression.cpp
+        src/parser/Statement.cpp
 )

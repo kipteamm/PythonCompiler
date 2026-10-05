@@ -187,7 +187,7 @@ inline std::string tokenTypeToString(const TOKENTYPE type) {
         case IN:             return "IN";
         case IS:             return "IS";
         case LAMBDA:         return "LAMBDA";
-        case MATCH:            return "MATCH";
+        case MATCH:          return "MATCH";
         case NONLOCAL:       return "NONLOCAL";
         case NOT:            return "NOT";
         case OR:             return "OR";

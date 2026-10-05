@@ -23,6 +23,25 @@ private:
 };
 
 
+// case {...}
+class DictionaryPattern final : public Pattern {
+public:
+    explicit DictionaryPattern(
+        std::vector<std::pair<std::unique_ptr<Literal>, std::unique_ptr<Pattern>>> entries,
+        std::unique_ptr<Pattern> rest = nullptr
+    );
+
+    void accept(ASTVisitor* visitor) override { visitor->visit(this); }
+
+    [[nodiscard]] std::vector<std::pair<std::unique_ptr<Literal>, std::unique_ptr<Pattern>>>& getEntries() { return this->entries; }
+    [[nodiscard]] Pattern* getRest() const { return this->rest.get(); }
+
+private:
+    std::vector<std::pair<std::unique_ptr<Literal>, std::unique_ptr<Pattern>>> entries;
+    std::unique_ptr<Pattern> rest;
+};
+
+
 // case 42:, case "hello":
 class LiteralPattern final : public Pattern {
 public:

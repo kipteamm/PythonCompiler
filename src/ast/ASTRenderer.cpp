@@ -46,6 +46,24 @@ void ASTRenderer::visit(CapturePattern* node) {
 }
 
 
+void ASTRenderer::visit(DictionaryPattern* node) {
+    oss << "\t" << *node << " [label=\"DictionaryPattern\", fontcolor=\"#d73a49\"];\n";
+
+    for (const auto& [key, value] : node->getEntries()) {
+        oss << "\t" << *node << " -> " << *key << ";\n";
+        key->accept(this);
+
+        oss << "\t" << *key << " -> " << *value << ";\n";
+        value->accept(this);
+    }
+
+    if (node->getRest() == nullptr) return;
+
+    oss << "\t" << *node << " -> " << *node->getRest() << ";\n";
+    node->getRest()->accept(this);
+}
+
+
 void ASTRenderer::visit(LiteralPattern* node) {
     oss << "\t" << *node << " [label=\"LiteralPattern\", fontcolor=\"#d73a49\"];\n";
 

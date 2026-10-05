@@ -49,6 +49,7 @@ private:
     [[nodiscard]] std::unique_ptr<Pattern> orPattern();
     [[nodiscard]] std::unique_ptr<Pattern> primaryPattern();
     [[nodiscard]] std::unique_ptr<SequencePattern> sequencePattern(TOKENTYPE closingToken);
+    [[nodiscard]] std::unique_ptr<DictionaryPattern> dictionaryPattern();
 
     // TYPES
     [[nodiscard]] std::unique_ptr<Type> type();

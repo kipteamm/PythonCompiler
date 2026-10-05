@@ -47,6 +47,10 @@ std::unique_ptr<Pattern> Parser::primaryPattern() {
     if (match(LEFT_BRACKET))
         return sequencePattern(RIGHT_BRACKET);
 
+    // Dictionary matching {x: ...}
+    if (match(LEFT_BRACE))
+        return dictionaryPattern();
+
     if (peek().type == IDENTIFIER) {
         const auto identifier = advance();
         if (identifier.lexeme == "_")
@@ -60,7 +64,7 @@ std::unique_ptr<Pattern> Parser::primaryPattern() {
 }
 
 
-std::unique_ptr<SequencePattern> Parser::sequencePattern(TOKENTYPE closingToken) {
+std::unique_ptr<SequencePattern> Parser::sequencePattern(const TOKENTYPE closingToken) {
     std::vector<std::unique_ptr<Pattern>> elements;
 
     // Handle empty sequence () or []
@@ -97,4 +101,50 @@ std::unique_ptr<SequencePattern> Parser::sequencePattern(TOKENTYPE closingToken)
     }
 
     return std::make_unique<SequencePattern>(std::move(elements));
+}
+
+
+std::unique_ptr<DictionaryPattern> Parser::dictionaryPattern() {
+    std::vector<std::pair<std::unique_ptr<Literal>, std::unique_ptr<Pattern>>> entries;
+    std::unique_ptr<Pattern> rest = nullptr;
+
+    if (match(RIGHT_BRACE)) // instantly closed
+        return std::make_unique<DictionaryPattern>(std::move(entries));
+
+    while (true) {
+        if (match(EXPONENT)) {
+            if (rest != nullptr)
+                throw std::runtime_error("multiple ** captures in dictionary pattern");
+
+            const Token id = consume(IDENTIFIER, "expected identifier or '_' after '**'");
+
+            if (id.lexeme == "_")
+                rest = std::make_unique<WildcardPattern>();
+            else
+                rest = std::make_unique<CapturePattern>(id);
+
+            // A ** capture must be the last element. Allow trailing comma, then expect brace.
+            if (match(COMMA))
+                consume(RIGHT_BRACE, "expected '}' after trailing comma");
+            else
+                consume(RIGHT_BRACE, "expected '}' after dictionary '**' capture");
+
+            break;
+        }
+
+        auto key = literal();
+        consume(COLON, "':' expected after dictionary key");
+
+        auto value = orPattern();
+        entries.emplace_back(std::move(key), std::move(value));
+
+        if (match(RIGHT_BRACE)) break;
+
+        consume(COMMA, "expected ',' or '}' after dictionary entry");
+
+        // Check end of dictionary following a trailign comma
+        if (match(RIGHT_BRACE)) break;
+    }
+
+    return std::make_unique<DictionaryPattern>(std::move(entries), std::move(rest));
 }

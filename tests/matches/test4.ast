@@ -1,0 +1,106 @@
+digraph AST {
+	splines=true; nodesep=0.5; ranksep=0.5;
+
+	node [shape=box, fontname="Courier"];
+	node_0[label="Scope"];
+	node_0 -> node_48;
+	node_48 [label="Function
+mapping", fontcolor="#d73a49"];
+	node_8 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
+	node_48 -> node_8;
+	node_7 [label="Parameter
+user_dict", fontcolor="#005cc5"];
+	node_6 [label="GenericType\ndict", fontcolor="#005cc5"];
+	node_2 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
+	node_6 -> node_2;
+	node_5 [label="UnionType", fontcolor="#005cc5"];
+	node_3 [label="UnresolvedType\nstr", fontcolor="#005cc5"];
+	node_5 -> node_3;
+	node_4 [label="UnresolvedType\nint", fontcolor="#005cc5"];
+	node_5 -> node_4;
+	node_6 -> node_5;
+	node_7 -> node_6;
+	node_48 -> node_7;
+	node_9[label="Scope"];
+	node_9 -> node_47;
+	node_47 [label="Match", fontcolor="#d73a49"];
+	node_47 -> node_10;
+	node_10 [label="ID(user_dict)"];
+	node_47 -> node_22;
+	node_22 [label="Case", fontcolor="#d73a49"];
+	node_22 -> node_16;
+	node_16 [label="DictionaryPattern", fontcolor="#d73a49"];
+	node_16 -> node_11;
+	node_11 [label="String(role)", fontcolor="#005cc5"];
+	node_11 -> node_13;
+	node_13 [label="LiteralPattern", fontcolor="#d73a49"];
+	node_13 -> node_12;
+	node_12 [label="String(admin)", fontcolor="#005cc5"];
+	node_16 -> node_14;
+	node_14 [label="String(name)", fontcolor="#005cc5"];
+	node_14 -> node_15;
+	node_15 [label="CapturePattern
+name", fontcolor="#d73a49"];
+	node_22 -> node_17;
+	node_17[label="Scope"];
+	node_17 -> node_21;
+	node_21 [label="Return", fontcolor="#d73a49"];
+	node_20 [label="JoinedString", fontcolor="#005cc5"];
+	node_18 [label="String(Admin user: )", fontcolor="#005cc5"];
+	node_20 -> node_18;
+	node_19 [label="ID(name)"];
+	node_20 -> node_19;
+	node_21 -> node_20;
+	node_47 -> node_30;
+	node_30 [label="Case", fontcolor="#d73a49"];
+	node_30 -> node_26;
+	node_26 [label="DictionaryPattern", fontcolor="#d73a49"];
+	node_26 -> node_23;
+	node_23 [label="String(role)", fontcolor="#005cc5"];
+	node_23 -> node_25;
+	node_25 [label="LiteralPattern", fontcolor="#d73a49"];
+	node_25 -> node_24;
+	node_24 [label="String(guest)", fontcolor="#005cc5"];
+	node_30 -> node_27;
+	node_27[label="Scope"];
+	node_27 -> node_29;
+	node_29 [label="Return", fontcolor="#d73a49"];
+	node_28 [label="String(Guest user)", fontcolor="#005cc5"];
+	node_29 -> node_28;
+	node_47 -> node_41;
+	node_41 [label="Case", fontcolor="#d73a49"];
+	node_41 -> node_34;
+	node_34 [label="DictionaryPattern", fontcolor="#d73a49"];
+	node_34 -> node_31;
+	node_31 [label="String(id)", fontcolor="#005cc5"];
+	node_31 -> node_32;
+	node_32 [label="CapturePattern
+user_id", fontcolor="#d73a49"];
+	node_34 -> node_33;
+	node_33 [label="CapturePattern
+extra", fontcolor="#d73a49"];
+	node_41 -> node_35;
+	node_35[label="Scope"];
+	node_35 -> node_40;
+	node_40 [label="Return", fontcolor="#d73a49"];
+	node_39 [label="JoinedString", fontcolor="#005cc5"];
+	node_36 [label="String(User ID )", fontcolor="#005cc5"];
+	node_39 -> node_36;
+	node_37 [label="ID(user_id)"];
+	node_39 -> node_37;
+	node_38 [label="ID(extra)"];
+	node_39 -> node_38;
+	node_40 -> node_39;
+	node_47 -> node_46;
+	node_46 [label="Case", fontcolor="#d73a49"];
+	node_46 -> node_42;
+	node_42 [label="WildcardPattern", fontcolor="#d73a49"];
+	node_46 -> node_43;
+	node_43[label="Scope"];
+	node_43 -> node_45;
+	node_45 [label="Return", fontcolor="#d73a49"];
+	node_44 [label="String(Unknown structure)", fontcolor="#005cc5"];
+	node_45 -> node_44;
+	node_48 -> node_9;
+
+}

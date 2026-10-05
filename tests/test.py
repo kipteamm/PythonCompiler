@@ -1,13 +1,11 @@
-# Fixed & Variable Length Sequences
-def sequences(data: list[int]) -> str:
-    match data:
-        case []:
-            return "empty"
-        case [x]:
-            return f"single item: {x}"
-        case [first, second]:
-            return f"pair: {first}, {second}"
-        case [head, *tail]:
-            return f"head: {head}, tail: {tail}"
-        case [*_, last]:
-            return f"last item: {last}"
+# Dict Destructuring
+def mapping(user_dict: dict[str, str | int]) -> str:
+    match user_dict:
+        case {"role": "admin", "name": name}:
+            return f"Admin user: {name}"
+        case {"role": "guest"}:
+            return "Guest user"
+        case {"id": user_id, **extra}:
+            return f"User ID {user_id} with extra fields: {extra}"
+        case _:
+            return "Unknown structure"

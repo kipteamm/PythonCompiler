@@ -6,6 +6,7 @@ class Node;
 class Scope;
 class Comment;
 class CapturePattern;
+class DictionaryPattern;
 class LiteralPattern;
 class OrPattern;
 class SequencePattern;
@@ -50,6 +51,7 @@ public:
     virtual void visit(Comment* node) = 0;
     virtual void visit(Assignment* node) = 0;
     virtual void visit(CapturePattern* node) = 0;
+    virtual void visit(DictionaryPattern* node) = 0;
     virtual void visit(LiteralPattern* node) = 0;
     virtual void visit(OrPattern* node) = 0;
     virtual void visit(SequencePattern* node) = 0;

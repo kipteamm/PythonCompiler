@@ -81,7 +81,13 @@ pattern
     // requirements, which the parser enforces but are not written out here.
     //  1. Can only be followed by a literal or an identifier (not a sequence)
     //  2. Can only occur once per sequence
-    | ('(' | '[') '*'? pattern (',' '*'? pattern)* (')' | ']');
+    | ('(' | '[') '*'? pattern (',' '*'? pattern)* (')' | ']')
+    // Dictionary:
+    // NOTE: dictionaries too can have a STAR_STAR pattern which has to follow
+    // the same rules as the sequence
+    | '{' key_value_pattern (',' key_value_pattern)* '}';
+
+key_value_pattern: expression ':' ('**')? expression
 
 while: 'while' expression ':' statement+ loop_else?;
 loop_else: 'else' ':' statement+;

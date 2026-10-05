@@ -15,6 +15,7 @@ public:
     void visit(Scope *node) override;
     void visit(Comment *node) override;
     void visit(CapturePattern* node) override;
+    void visit(DictionaryPattern* node) override;
     void visit(LiteralPattern* node) override;
     void visit(OrPattern* node) override;
     void visit(SequencePattern* node) override;

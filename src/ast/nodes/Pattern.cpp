@@ -7,6 +7,9 @@ CapturePattern::CapturePattern(Token  identifier)
     : identifier(std::move(identifier)) {}
 
 
+DictionaryPattern::DictionaryPattern(std::vector<std::pair<std::unique_ptr<Literal>, std::unique_ptr<Pattern>>> entries, std::unique_ptr<Pattern> rest)
+    : entries(std::move(entries)), rest(std::move(rest)) {}
+
 LiteralPattern::LiteralPattern(std::unique_ptr<Literal> literal)
     : literal(std::move(literal)) {}
 
